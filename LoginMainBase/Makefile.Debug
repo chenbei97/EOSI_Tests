@@ -276,6 +276,7 @@ debug\moc_loginbutton.cpp: loginbutton.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\qfiledevice.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtGui\qvector2d.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtGui\qtouchdevice.h \
+		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\QDebug \
 		debug\moc_predefs.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\bin\moc.exe
 	C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\bin\moc.exe $(DEFINES) --compiler-flavor=msvc --include C:/Users/22987/Desktop/EOSI_Tests/LoginMainBase/debug/moc_predefs.h -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/mkspecs/win32-msvc -IC:/Users/22987/Desktop/EOSI_Tests/LoginMainBase -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/include -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/include/QtWidgets -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/include/QtGui -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/include/QtANGLE -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/include/QtCore -I"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\include" -I"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\include" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\winrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\cppwinrt" loginbutton.h -o debug\moc_loginbutton.cpp
@@ -522,6 +523,8 @@ debug\moc_mainwindow.cpp: mainwindow.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\qlayoutitem.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\qgridlayout.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\QVBoxLayout \
+		loginbutton.h \
+		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\QDebug \
 		debug\moc_predefs.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\bin\moc.exe
 	C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\bin\moc.exe $(DEFINES) --compiler-flavor=msvc --include C:/Users/22987/Desktop/EOSI_Tests/LoginMainBase/debug/moc_predefs.h -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/mkspecs/win32-msvc -IC:/Users/22987/Desktop/EOSI_Tests/LoginMainBase -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/include -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/include/QtWidgets -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/include/QtGui -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/include/QtANGLE -IC:/Qt/Qt5.14.2/5.14.2/msvc2017_64/include/QtCore -I"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\include" -I"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\include" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\winrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\cppwinrt" mainwindow.h -o debug\moc_mainwindow.cpp
@@ -651,7 +654,8 @@ debug\loginbutton.obj: loginbutton.cpp loginbutton.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\qfile.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\qfiledevice.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtGui\qvector2d.h \
-		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtGui\qtouchdevice.h
+		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtGui\qtouchdevice.h \
+		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\QDebug
 
 debug\loginmainbase.obj: loginmainbase.cpp loginmainbase.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\QObject \
@@ -892,6 +896,8 @@ debug\main.obj: main.cpp mainwindow.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\qlayoutitem.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\qgridlayout.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\QVBoxLayout \
+		loginbutton.h \
+		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\QDebug \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\QApplication \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\qapplication.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\qcoreapplication.h \
@@ -1021,6 +1027,8 @@ debug\mainwindow.obj: mainwindow.cpp mainwindow.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\qlayoutitem.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\qgridlayout.h \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtWidgets\QVBoxLayout \
+		loginbutton.h \
+		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\QDebug \
 		C:\Qt\Qt5.14.2\5.14.2\msvc2017_64\include\QtCore\QSharedPointer
 
 debug\moc_loginbutton.obj: debug\moc_loginbutton.cpp 
