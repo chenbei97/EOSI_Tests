@@ -3,7 +3,7 @@
 #include <QDebug>
 #define sqlite 0
 #define mysql 1
-#define odbc 2
+//#define odbc 2
 
 int main(int argc, char *argv[])
 {
