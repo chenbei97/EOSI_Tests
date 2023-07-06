@@ -2,7 +2,7 @@
 #include <QtSql>
 #include <QDebug>
 #define sqlite 0
-#define mysql 1
+//#define mysql 1
 #define odbc 2
 
 int main(int argc, char *argv[])
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     db.setPassword("199791");
     db.setDatabaseName(QString::fromLocal8Bit("cell"));
 #elif odbc
-    qDebug()<<"0dbc is running";
+    qDebug()<<"odbc is running";
     db = QSqlDatabase::addDatabase("QODBC3");
     //db.setHostName("127.0.0.1");  //连接本地主机
     //db.setPort(3306);
