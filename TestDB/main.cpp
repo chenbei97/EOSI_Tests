@@ -3,13 +3,14 @@
 #include <QDebug>
 #define sqlite 0
 //#define mysql 1
-#define odbc 2
+//#define odbc 2
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     qDebug()<<QSqlDatabase ::drivers();
     QSqlDatabase db;
+
 
 #ifdef mysql
     qDebug()<<"mysql is running";
@@ -37,7 +38,7 @@ int main(int argc, char *argv[])
 #else
     qDebug()<<"sqlite is running";
     db = QSqlDatabase::addDatabase("QSQLITE");//
-    db.setDatabaseName("mdb"); // 会自动创建
+    db.setDatabaseName("cell"); // 会自动创建
 #endif
 
     if (!db.open())
@@ -45,7 +46,22 @@ int main(int argc, char *argv[])
         qDebug()<<db.lastError().text();
     }else {qDebug()<<"successful!";}
 
-    QSqlQuery query;
+    QSqlQuery query(db);
+//    query.exec("create table cell_system("
+//               "id int primary key,"
+//              "username varchar(100),"
+//               "password varchar(100))");
+//    qDebug()<<query.isActive();
+    qDebug()<<query.lastError().text();
+    query.exec("insert into cell_system values ('1','cb','199791');");
+//       query.exec("insert into cell_system"
+//               "values (2,'chenbei','cb199791!');");
+    qDebug()<<query.isActive();
+    qDebug()<<query.lastError().text();
+    qDebug()<<123;
+    query.exec("select  *  from cell_system ");
+    qDebug()<<"query.record().count() = "<<query.record().count();
+
     query.exec("select  *  from employee "); //where id = 1 name = 'A' 限制条件会影响下边的rec
     qDebug()<<query.isActive(); // true
     qDebug()<<query.isValid(); // false 没有指向有效的行只会返回空记录
@@ -69,6 +85,13 @@ int main(int argc, char *argv[])
     // 除非是QSqlTableModel.record(row)返回的对象可以去访问某一行的记录
     query.first();
     qDebug()<<query.value("entrydate").toString();
+
+    qDebug()<<db.connectionName();
+    qDebug()<<QSqlDatabase::database();
+    QSqlDatabase::removeDatabase(db.connectionName());
+    qDebug()<<QSqlDatabase::database();
+    db.close();
+    qDebug()<<QSqlDatabase::database();
 
     return a.exec();
 }
