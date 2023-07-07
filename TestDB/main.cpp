@@ -4,13 +4,36 @@
 #define sqlite 0
 //#define mysql 1
 //#define odbc 2
+#define sqlite33 2
+#include <sqlite3.h>
+
+void test_sqlite()
+{
+    sqlite3 *db;
+    //SQLiteConnection.CreateFile(“c:\\test.db“);
+    char *zErrMsg = 0;
+    int rc;
+
+    rc = sqlite3_open("test.db", &db);
+
+    if( rc ){
+       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+       exit(0);
+    }else{
+       fprintf(stderr, "Opened database successfully\n");
+    }
+    sqlite3_close(db);
+}
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+#ifdef sqlite33
+    test_sqlite();
+#endif
+
     qDebug()<<QSqlDatabase ::drivers();
     QSqlDatabase db;
-
 
 #ifdef mysql
     qDebug()<<"mysql is running";
@@ -39,6 +62,7 @@ int main(int argc, char *argv[])
     qDebug()<<"sqlite is running";
     db = QSqlDatabase::addDatabase("QSQLITE");//
     db.setDatabaseName("cell"); // 会自动创建
+    db.setPassword("123456");
 #endif
 
     if (!db.open())
@@ -47,11 +71,11 @@ int main(int argc, char *argv[])
     }else {qDebug()<<"successful!";}
 
     QSqlQuery query(db);
-//    query.exec("create table cell_system("
-//               "id int primary key,"
-//              "username varchar(100),"
-//               "password varchar(100))");
-//    qDebug()<<query.isActive();
+    query.exec("create table cell_system("
+               "id int primary key,"
+              "username varchar(100),"
+               "password varchar(100))");
+    qDebug()<<query.isActive();
     qDebug()<<query.lastError().text();
     query.exec("insert into cell_system values ('1','cb','199791');");
 //       query.exec("insert into cell_system"
@@ -92,6 +116,5 @@ int main(int argc, char *argv[])
     qDebug()<<QSqlDatabase::database();
     db.close();
     qDebug()<<QSqlDatabase::database();
-
     return a.exec();
 }
