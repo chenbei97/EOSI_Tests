@@ -94,8 +94,52 @@ private:
     QPushButton * btn2;
     QPushButton * btn3;
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    MainWindow(QWidget *parent = nullptr){
+
+        mController = new Controller(statusBar());
+
+        btn1 = new QPushButton("不用线程");
+        btn2 = new QPushButton("重载线程");
+        btn3 = new QPushButton("移入线程");
+
+        QHBoxLayout * layout = new QHBoxLayout;
+        layout->addWidget(btn1);
+        layout->addWidget(btn2);
+        layout->addWidget(btn3);
+        QGroupBox * box = new QGroupBox;
+        box->setLayout(layout);
+        setCentralWidget(box);
+
+        resize(400,300);
+
+        connect(btn1,&QPushButton::clicked,this,[=]{
+            QRandomGenerator RG(QTime::currentTime().msec());
+            long long result = 0;
+            QTime s;
+            s.start();
+            for (long long i = 0; i < MAXCOUNT; ++i)
+            {
+                result += RG.bounded(0,100);
+            }
+            auto t = s.elapsed() / 1000.0;
+            statusBar()->showMessage(QString("耗时: %1 s  结果: %2\n").arg(t).arg(result));
+        });
+
+        connect(&mThread,&MyThread::ready,this,[=](const QString& r){
+            statusBar()->showMessage(r);
+        });
+        connect(btn2,&QPushButton::clicked,this,[=]{
+                mThread.start();
+        });
+
+        connect(btn3,&QPushButton::clicked,this,[=]{
+                mController->start(0,100);
+        });
+    };
+    ~MainWindow(){
+        mThread.quit();
+        mThread.wait();
+    };
 private slots:
 //    void onbtn1();
 //    void onbtn2();
