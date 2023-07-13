@@ -1,4 +1,5 @@
-QT       += core gui
+QT       += core gui  serialport network
+CONFIG   += utf8_source
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
