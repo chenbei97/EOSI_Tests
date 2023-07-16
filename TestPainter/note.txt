@@ -1,0 +1,3 @@
+﻿connect(shapeComboBox, QOverload<int>::of(&QComboBox::activated),
+        this, &Window::shapeChanged);
+
