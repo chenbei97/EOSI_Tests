@@ -1,7 +1,6 @@
 ﻿#ifndef STYLE_H
 #define STYLE_H
 
-#include "core/core.h"
 /*
 qss不是完全支持所有的css2，比如text-align官方文档就有说明，只支持 QPushButton and QProgressBar
 qss的执行是有优先级的，如果没有指定父对象，则对所有的应用

@@ -1,6 +1,7 @@
-#include "tableview.h"
+﻿#include "tableview.h"
 
-TableView::TableView()
+TableView::TableView(QWidget*parent):QTableView(parent)
 {
+
 
 }

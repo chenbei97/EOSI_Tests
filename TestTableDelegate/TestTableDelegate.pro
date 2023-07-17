@@ -16,13 +16,34 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    image2x2delegate.cpp \
+    image2x2widget.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    pushbuttondelegate.cpp \
+    qwcomboboxdelegate.cpp \
+    table2x2delegate.cpp \
+    table_8x12x4.cpp \
+    tableview.cpp \
+    tablewidgetbase.cpp
 
 HEADERS += \
-    mainwindow.h
+    Constant.h \
+    Style.h \
+    image2x2delegate.h \
+    image2x2widget.h \
+    mainwindow.h \
+    pushbuttondelegate.h \
+    qwcomboboxdelegate.h \
+    table2x2delegate.h \
+    table_8x12x4.h \
+    tableview.h \
+    tablewidgetbase.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    img.qrc

@@ -9,8 +9,6 @@
 //#include <vector>
 //#endif
 
-#include "core/core.h"
-
 // 便捷函数
 
 #define INIT_MINSIZE(w,h) (setMinimumSize(w,h))

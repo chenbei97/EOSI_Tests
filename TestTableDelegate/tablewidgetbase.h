@@ -7,6 +7,7 @@
 #include <qscrollbar.h>
 #include "Constant.h"
 #include "Style.h"
+#include "qwcomboboxdelegate.h"
 
 class TableWidgetBase : public QTableWidget
 {
