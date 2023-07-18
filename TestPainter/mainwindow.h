@@ -6,6 +6,8 @@
 #include <QPaintEvent>
 #include <QMainWindow>
 #include <QStaticText>
+#include <QStylePainter>
+#include <QStyleOption>
 
 class MainWindow : public QWidget
 {
