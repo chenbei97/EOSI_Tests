@@ -11,7 +11,7 @@ QWidget *Table2x2Delegate::createEditor(QWidget *parent,
 {
     Q_UNUSED(option);
     Q_UNUSED(index);
-    auto editor = new TableWidgetBase(2,2);
+    auto editor = new TableWidgetBase(2,2,parent);
 
     return editor;
 }

@@ -12,9 +12,9 @@ TableWidgetBase::TableWidgetBase(int rows,int cols,QWidget * parent):QTableWidge
     for(int col = 0; col < columnCount(); ++col)
         setColumnWidth(col,TableWidgetItemWidth);
 
-    for (int row = 0; row < rowCount();++row)
-        for(int col = 0; col < columnCount(); ++col)
-            setItem(row,col,new QTableWidgetItem(QString::number(qrand()%101)));
+//    for (int row = 0; row < rowCount();++row)
+//        for(int col = 0; col < columnCount(); ++col)
+//            setItem(row,col,new QTableWidgetItem(QString::number(qrand()%101)));
 
     //setSelectionBehavior(QAbstractItemView::SelectItems);//选中时只选中1个项
     //setSelectionMode(QAbstractItemView::SingleSelection); // 选择项只能选中1个,再点另一个会取消选中之前的
@@ -48,10 +48,6 @@ TableWidgetBase::TableWidgetBase(int rows,int cols,QWidget * parent):QTableWidge
     horizontalHeader()->setStretchLastSection(false);
     horizontalHeader()->setMinimumSectionSize(TableWidgetItemMinWidth);
     horizontalHeader()->setDefaultSectionSize(TableWidgetItemHeight);
-
-//    auto delegate1 = new QWComboBoxDelegate;
-//    delegate1->setItems(QStringList()<<"A"<<"B",true);
-//    setItemDelegate(delegate1);
 
     resize(TableWidgetItemWidth*columnCount(),TableWidgetItemHeight*rowCount());
     INIT_FONT;

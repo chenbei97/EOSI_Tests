@@ -9,6 +9,7 @@ Image2x2Widget::Image2x2Widget(QWidget *parent) : QWidget(parent)
     {
         mLabels.append(new QLabel);
         mFileNames.append("");
+        mPixs.append(nullptr);
     }
 
     QHBoxLayout * lay1 = new QHBoxLayout;
@@ -23,38 +24,71 @@ Image2x2Widget::Image2x2Widget(QWidget *parent) : QWidget(parent)
     lay->addLayout(lay2);
 }
 
-void Image2x2Widget::setPixmap(int index,const QString& file)
-{
-    mFileNames[index] = file;
+//void Image2x2Widget::setPixmap(int index,const QString& file)
+//{
+//    mFileNames[index] = file;
 
-    mLabels[index]->setPixmap(QPixmap(file));
+//    mLabels[index]->setPixmap(QPixmap(file));
+//}
+
+//void Image2x2Widget::setPixmap(int index,const QPixmap&pix)
+//{
+//    mLabels[index]->setPixmap(pix);
+//}
+
+void Image2x2Widget::setText(int index, const QString&text)
+{
+    mFileNames[index] = text;
+    mLabels[index]->setText(text);
+
 }
 
-void Image2x2Widget::setPixmap(int index,const QPixmap&pix)
-{
-    mLabels[index]->setPixmap(pix);
-
-}
-
-const QPixmap * Image2x2Widget::pixmap(int index) const
-{
-    return mLabels[index]->pixmap();
-}
-
-QString Image2x2Widget::pixmapName(int index) const
+QString Image2x2Widget::text(int index) const
 {
     return mFileNames[index];
 }
 
-QStringList Image2x2Widget::pixmapNames() const
+QStringList Image2x2Widget::texts() const
 {
-    return  mFileNames;
+    return mFileNames;
 }
 
-QList<const QPixmap*> Image2x2Widget::pixmaps()  const
+void Image2x2Widget::setPixmap(int index,QPixmap*pix)
 {
-    QList<const QPixmap*> pixs;
-    foreach(auto label,mLabels)
-        pixs.append(label->pixmap());
-    return pixs;
+    mLabels[index]->setPixmap(*pix);
+    mPixs[index] = pix;
+}
+
+QPixmap* Image2x2Widget::pixmap(int index) const
+{
+    // mLabels[index]->pixmap()返回的const QPixmap*指针不兼容
+    return mPixs[index];
+}
+
+//const QPixmap * Image2x2Widget::pixmap(int index) const
+//{
+//    return mLabels[index]->pixmap();
+//}
+
+//QString Image2x2Widget::pixmapName(int index) const
+//{
+//    return mFileNames[index];
+//}
+
+//QStringList Image2x2Widget::pixmapNames() const
+//{
+//    return  mFileNames;
+//}
+
+//QList<const QPixmap*> Image2x2Widget::pixmaps()
+//{
+//    QList< const QPixmap*> pixs;
+//    foreach(auto label,mLabels)
+//        pixs.append(label->pixmap());
+//    return pixs;
+//}
+
+QList<QPixmap*> Image2x2Widget::pixmaps() const
+{
+    return mPixs;
 }
