@@ -1,5 +1,8 @@
 ﻿#include "mainwindow.h"
 #include <QDebug>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QComboBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
@@ -38,6 +41,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
 #define Log(s) (qDebug()<<QString("%1 = ").arg(s))
 
+#define StylePainter 0
 #define FillPath 0
 #define FillRect 0
 
@@ -59,7 +63,15 @@ void MainWindow::paintEvent(QPaintEvent *e)
 #define DrawPie 0
 
 #define  DrawText 0
+#define SetViewPort 0
 #define SetWindow 0
+#define SetWindowAndViewPort 0
+
+//#define SetWindowBeforeViewPort 0
+#define SetViewPortBeforeWindow 0
+//#define  DrawPathBeforeSet 0
+#define  DrawPathAfterSet 0
+
 //#define ReadProperties 0
 
 #ifdef ReadProperties
@@ -84,6 +96,17 @@ void MainWindow::paintEvent(QPaintEvent *e)
     Log("worldTransform()")<<painter.worldTransform();//QTransform(type=TxNone, 11=1 12=0 13=0 21=0 22=1 23=0 31=0 32=0 33=1)
     Log("end()")<<painter.end(); // 结束绘画 true
     Log("isActive()")<<painter.isActive(); // false, 如果已调用begin而未调用end返回true否则返回false
+#elif defined (StylePainter)
+
+    QStyleOptionFocusRect option;
+    option.initFrom(new QComboBox);
+    option.backgroundColor = palette().color(QPalette::Background);
+#ifdef UseStyleOption
+    style()->drawPrimitive(QStyle::PE_FrameFocusRect, &option, &painter, this);
+#else
+    QStylePainter stylepainter(this);//使用小部件的样式绘制由QStyleOption选项指定的基本元素
+    stylepainter.drawPrimitive(QStyle::PE_FrameFocusRect, option);
+#endif
 
 #elif defined(FillPath)
     QPainterPath p;
@@ -109,10 +132,36 @@ void MainWindow::paintEvent(QPaintEvent *e)
     qDebug()<<"QPainterPath.elementAt(0) = "<<p.elementAt(0); // QPointF(0,0)
     //QPainterPath p1; p1.moveTo(600,200); p1.lineTo(800,800); p1.closeSubpath();
     //qDebug()<<"QPainterPath.intersected(p) = "<<p.intersected(p); // 会返回和指定路径交集的点
-
+    p.closeSubpath();
     painter.setBrush(QBrush(Qt::red,Qt::Dense1Pattern));
     painter.fillPath(p,painter.brush());
 
+    static const double deg = 72.0*3.1415926535/180.0;
+    auto r = 200;
+    QVector<QPointF> points;
+    painter.setPen(QPen(Qt::green,30));
+    painter.setFont(QFont("Times New Roman",30));
+    for (int i = 0 ;i < 6; ++i){
+        auto point = QPointF(300+r * cos(deg*i),300+r * sin(i*deg));
+        qDebug()<<"point = "<<point;
+        painter.drawPoint(point);
+        if (i != 5)
+            painter.drawText(point,QString::number(i+1));
+        points.append(point);
+    }
+    QPainterPath p1;
+    p1.moveTo(300+r,300);
+    for(int i = 0; i < 6; ++i)
+        p1.lineTo(points[i]);
+    painter.setPen(QPen(Qt::blue,1));
+    painter.drawPath(p1);
+
+    painter.save();
+    painter.translate(200,30);// 坐标进行了平移
+    painter.drawText(0,30,"123455"); // 把文字基于200,30的位置向下移动30
+    painter.restore();
+    painter.translate(200,200); // 平移200
+    painter.drawText(100,100,"782485"); // 基于200,200的位置继续平移100
 #elif defined (FillRect)
     painter.fillRect(QRectF(200,200,400,400),Qt::yellow);
     painter.eraseRect(300,300,200,200);
@@ -121,19 +170,89 @@ void MainWindow::paintEvent(QPaintEvent *e)
     painter.setClipRect(QRectF(0,0,800,800));
     painter.setClipRegion(QRegion(QRect(100,100,50,50)));
 
-#elif defined (SetWindow)
-    painter.beginNativePainting();
+#elif defined (SetWindowAndViewPort)
     painter.setBrush(Qt::white);
-    QPainterPath path; // 对于path还是用的viewPort物理坐标系
+    //auto r1 = QRect(0,0,600,600);
+    auto r1 = QRect(200,200,600,600); // 规定了起点坐标(200,200) ,600长度的正方形
+    auto r2 = QRect(-100,-100,200,200); // 窗口基于这个起点生成1个200的正方形
+    auto r3 = QRect(0,0,100,100); // 矩形基于窗口坐标去绘制,那就是在窗口的中心位置继续绘制小矩形
+
+#ifdef SetWindowBeforeViewPort
+    painter.setWindow(r2); // 先设置哪个没有区别,展示的效果没有影响
+    painter.setViewport(r1);
+#else
+    painter.setViewport(r1);
+    painter.setWindow(r2);
+#endif
+    painter.setPen(QPen(Qt::red,3));
+    painter.drawRect(r2);
+    painter.setPen(QPen(Qt::black,1));
+    painter.drawRect(r3);
+
+#elif defined (SetViewPort)
+    // 单独设置viewport有以下几条规律
+    // 1. 如果没设置过viewport, widget,window和viewport的size都会同步1:1变化; 如果设置过viewport,就会固定下来
+    // 2. 设置过viewport然后绘制的矩形会随着resize缩放,size变大相反矩形变小,size缩小矩形则变大
+    // 3. viewport是一个独立系统方便绘制,绘制完后会自动等比例相反的缩放至widget的大小
+    // 4. 可以通过总是取值widget宽高较小的那个来保证不变形
+    // 5. 设置的viewport起点会变化,所有绘制的矩形都会基于新的起点去绘制
+     painter.setBrush(Qt::white);
+
+#ifdef DrawPathBeforeSet
+     // 没设置viewport使用的是widget物理坐标,path位置根本不随widget改变
+     QPainterPath path;
+     path.moveTo(400,0);
+     path.lineTo(800,300);
+     path.arcTo(QRectF(0,0,800,600),0,-90); // 这里不用x16,用的就是角度, 默认水平3点钟方向,矩形区域是整体,顺时针绘制一段90°圆弧
+     // 最快的理解方法: 把圆弧补齐成圆就知道这个矩形,起始角度和绘制角度多少合适的
+     path.arcTo(QRectF(-400,300,800,600),0,90); //是一个只有右上角1/4的部分在可见区域矩形
+     path.quadTo(0,0,400,0);
+     path.closeSubpath(); // 回到最初的起点400,0
+     painter.drawPath(path);
+#endif
+
+ #ifdef   SetViewPortTest1
+    int side = qMin(width(), height());
+    int x = (width() - side )/ 2;
+    int y = (height() - side ) / 2;
+    painter.setPen(Qt::blue);
+    painter.setViewport(x, y, side, side);
+    //painter.setViewport(0,0,1600,1600);
+    //painter.setViewport(0,0,600,600);
+    painter.drawRect(x, y, side, side);
+ #else
+    //auto r1 = QRect(0,0,600,600);
+    auto r1 = QRect(300,300,600,600);
+    auto r2 = QRect(0,0,300,300);
+    auto r3 = QRect(0,0,100,100);
+    //auto r2 = QRect(0,0,400,400); // 视口和窗口正好左上角重合
+    //auto r2 = QRect(0,0,1300,1300); // 视口很大,矩形看起来很大无法显示完全
+    //auto r2 = r1; // 视口的起点在左上角外部
+    painter.setViewport(r1);
+
+    painter.setPen(QPen(Qt::red,3));
+    painter.drawRect(r1);
+    painter.setPen(QPen(Qt::blue,3));
+    painter.drawRect(r2);
+    painter.setPen(QPen(Qt::black,1));
+    painter.drawRect(r3);
+#endif
+#ifdef DrawPathAfterSet
+    // 设置viewport后,使用的是viewport物理坐标,path位置会随着widget改变,同时起点也会变化
+    QPainterPath path;
     path.moveTo(400,0);
-    path.lineTo(800,400);
-    path.arcTo(QRectF(0,0,800,800),0,-90); // 这里不用x16,用的就是角度, 默认水平3点钟方向,矩形区域是整体,顺时针绘制一段90°圆弧
+    path.lineTo(800,300);
+    path.arcTo(QRectF(0,0,800,600),0,-90); // 这里不用x16,用的就是角度, 默认水平3点钟方向,矩形区域是整体,顺时针绘制一段90°圆弧
     // 最快的理解方法: 把圆弧补齐成圆就知道这个矩形,起始角度和绘制角度多少合适的
-    path.arcTo(QRectF(-400,400,800,800),0,90); //是一个只有右上角1/4的部分在可见区域矩形
+    path.arcTo(QRectF(-400,300,800,600),0,90); //是一个只有右上角1/4的部分在可见区域矩形
     path.quadTo(0,0,400,0);
     path.closeSubpath(); // 回到最初的起点400,0
-    path.lineTo(800,800);
     painter.drawPath(path);
+#endif
+
+    qDebug()<<"width = "<<width()<<" height = "<<height();
+    qDebug()<<"window width = "<<painter.window().width()<<" window height = "<<painter.window().height();
+    qDebug()<<"viewport width = "<<painter.viewport().width()<<" viewport height = "<<painter.viewport().height();
 
 //    QRegion r1(QRect(0, 0, 200, 80), QRegion::Ellipse);// r1: elliptic region
 //    QRegion r2(QRect(0, 0, 90, 30));    // r2: rectangular region
@@ -141,20 +260,70 @@ void MainWindow::paintEvent(QPaintEvent *e)
 //    painter.setBrush(Qt::yellow);
 //    painter.setClipRegion(r3);
 
-//    int side = qMin(width(), height());
-//    int x = (width() - side / 2);
-//    int y = (height() - side / 2);
-//    painter.setViewport(x, y, side, side);
-//    painter.setPen(Qt::blue);
-//    painter.drawRect(x-20, y-20, side, side);
+#elif defined (SetWindow)
+        // 单独设置window有以下几条规律
+        // 1. 如果没设置过window, widget,window和viewport的size都会同步1:1变化; 如果设置过window,就会固定下来
+        // 2. 设置过window,然后绘制的矩形会随着resize缩放,size变大矩形也变大,size缩小矩形也变小
+        // 3. window是一个独立系统方便绘制,绘制完后会自动等比例缩放至widget的大小
+        // 4. 矩形都是依据(0,0)绘制的,如果(0,0)位置不放在窗口中间位置,也就是左上角不是(-200,-200)这样
+        // 其实就是相当于设备坐标了,逻辑坐标就失去意义,所以设置window左上角坐标都设为负的
+        painter.beginNativePainting();
+        painter.setBrush(Qt::white);
 
-    // path先设置好，再setWindow，这样会自动缩放到window的尺寸
-    painter.setWindow(QRect(-200,-200,400,400)); // setWindow规定了一个窗口,是逻辑坐标系统
-    painter.drawRect(QRect(-50,-50,100,100)); // 绘制的时候以逻辑坐标参照,限于drawxx系列函数 //然后会自动映射到viewport等比例放大
-    painter.endNativePainting();// 在手动发出本机绘制命令后恢复绘制者。在调用任何其他painter命令之前，允许painter恢复其所依赖的任何原生状态
-    qDebug()<<"width = "<<width()<<" height = "<<height();
+#ifdef DrawPathBeforeSet
+        // 如果setWindow之前设置,使用的还是widget物理坐标系
+        QPainterPath path;
+        path.moveTo(400,0);
+        path.lineTo(800,300);
+        path.arcTo(QRectF(0,0,800,600),0,-90); // 这里不用x16,用的就是角度, 默认水平3点钟方向,矩形区域是整体,顺时针绘制一段90°圆弧
+        // 最快的理解方法: 把圆弧补齐成圆就知道这个矩形,起始角度和绘制角度多少合适的
+        path.arcTo(QRectF(-400,300,800,600),0,90); //是一个只有右上角1/4的部分在可见区域矩形
+        path.quadTo(0,0,400,0);
+        path.closeSubpath(); // 回到最初的起点400,0
+        //path.lineTo(800,600);
+        painter.drawPath(path);
+#endif
+ #ifdef   SetViewPortTest1
+        // path先设置好，再setWindow，这样会自动缩放到window的尺寸
+        painter.setWindow(QRect(-1800,-1800,3600,3600));
+        //painter.setWindow(QRect(-300,-300,600,600));
+        //painter.setWindow(QRect(-200,-200,400,400)); // setWindow规定了一个窗口,是逻辑坐标系统
+        painter.drawRect(QRect(-50,-50,100,100)); // 绘制的时候以逻辑坐标参照,限于drawxx系列函数 //然后会自动映射到viewport等比例放大
+#else
+        auto r1 = QRect(0,0,600,600); // 坐标中心位置变成(300,300),矩形会依据(0,0)去绘制,结果都基于左上角绘制的
+        //auto r1 = QRect(-300,-300,600,600); // (0,0)变成坐标中心,那么后边2个矩形是基于中心位置绘制,窗口上就是中间位置右下角
+        auto r2 = QRect(0,0,300,300);
+        auto r3 = QRect(0,0,100,100);
+        //auto r2 = QRect(0,0,400,400); // 视口和窗口正好左上角重合
+        //auto r2 = QRect(0,0,1300,1300); // 视口很大,矩形看起来很大无法显示完全
+        //auto r2 = r1; // 视口的起点在左上角外部
+        painter.setWindow(r1);
 
+        painter.setPen(QPen(Qt::red,3));
+        painter.drawRect(r1);
+        painter.setPen(QPen(Qt::blue,3));
+        painter.drawRect(r2);
+        painter.setPen(QPen(Qt::black,1));
+        painter.drawRect(r3);
+#endif
+#ifdef DrawPathAfterSet
+        // 如果setWindow之后设置,使用的是window逻辑坐标系
+        QPainterPath path;
+        path.moveTo(400,0);
+        path.lineTo(800,300);
+        path.arcTo(QRectF(0,0,800,600),0,-90); // 这里不用x16,用的就是角度, 默认水平3点钟方向,矩形区域是整体,顺时针绘制一段90°圆弧
+        // 最快的理解方法: 把圆弧补齐成圆就知道这个矩形,起始角度和绘制角度多少合适的
+        path.arcTo(QRectF(-400,300,800,600),0,90); //是一个只有右上角1/4的部分在可见区域矩形
+        path.quadTo(0,0,400,0);
+        path.closeSubpath(); // 回到最初的起点400,0
+        //path.lineTo(800,600);
+        painter.drawPath(path);
+#endif
+        qDebug()<<"width = "<<width()<<" height = "<<height();
+        qDebug()<<"window width = "<<painter.window().width()<<" window height = "<<painter.window().height();
+        qDebug()<<"viewport width = "<<painter.viewport().width()<<" viewport height = "<<painter.viewport().height();
 
+        painter.endNativePainting();// 在手动发出本机绘制命令后恢复绘制者。在调用任何其他painter命令之前，允许painter恢复其所依赖的任何原生状态
 #elif defined (DrawPath)
     // 路径: 添加封闭图形,ellipse,path,rect,region,text,connectPath
     // 非封闭: lineTo, cubicTo, moveTo, addPloygon
