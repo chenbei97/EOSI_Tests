@@ -11,6 +11,8 @@
 class Image2x2Delegate: public QStyledItemDelegate
 {
     Q_OBJECT
+private:
+    QPoint mMousePos;
 public:
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const Q_DECL_OVERRIDE;
@@ -21,6 +23,9 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
                               const QModelIndex &index) const Q_DECL_OVERRIDE;
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+    //void mousePressEvent(QMouseEvent*e) ;
+signals:
+
 };
 
 #endif // IMAGE2X2DELEGATE_H

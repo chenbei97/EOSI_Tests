@@ -92,3 +92,14 @@ QList<QPixmap*> Image2x2Widget::pixmaps() const
 {
     return mPixs;
 }
+
+void Image2x2Widget::mousePressEvent(QMouseEvent *event)
+{ // 事件被TableView截获，除非设置触发方式有单击或者全部触发这里才会接收
+    qDebug()<<"press pos = "<<event->pos();
+}
+
+void Image2x2Widget::mouseReleaseEvent(QMouseEvent *event)
+{
+    qDebug()<<"Release pos = "<<event->pos();
+}
+

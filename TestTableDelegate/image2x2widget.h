@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QMouseEvent>
 
 class Image2x2Widget : public QWidget
 {
@@ -28,6 +29,8 @@ public:
 //    QList<const QPixmap*> pixmaps();
         QList<QPixmap*> pixmaps() const;
 
+        void mousePressEvent(QMouseEvent *event) override;
+        void mouseReleaseEvent(QMouseEvent *event) override;
 signals:
 
 };

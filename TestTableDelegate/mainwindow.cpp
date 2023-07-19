@@ -31,14 +31,20 @@ MainWindow::MainWindow(QWidget *parent)
 //    table2->setRowCount(12);table2->setColumnCount(8);
 
     QTableView * view1 = new QTableView;
+    view1->setMouseTracking(true);
 
-view1->setItemDelegate(delegate3);
-view1->setEditTriggers(QAbstractItemView::AllEditTriggers);
+view1->setItemDelegate(delegate3); // QAbstractItemView::CurrentChanged
+//view1->setEditTriggers(QAbstractItemView::AllEditTriggers);//QAbstractItemView::SelectedClicked||QAbstractItemView::DoubleClicked
+//view1->setEditTriggers(QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked
+//                       |QAbstractItemView::EditKeyPressed );
+
+qDebug()<<"edit = " << view1->editTriggers();
     QStandardItemModel * model2 = new QStandardItemModel(view1);
     model2->setRowCount(2);model2->setColumnCount(2);
     QMap<int, QVariant> roles;
     //roles[Qt::DecorationRole] = QStringList()<<":/1.jpg"<<":/2.jpg"<<":/3.jpg"<<":/4.jpg";
 
+    //view1->setEnabled(false);
     auto texts = QStringList()<<":/1.jpg"<<":/2.jpg"<<":/3.jpg"<<":/4.jpg";
     QList<QPixmap*> iconlist;
     iconlist<<new QPixmap(":/1.jpg")<<new QPixmap(":/2.jpg")
@@ -50,10 +56,13 @@ view1->setEditTriggers(QAbstractItemView::AllEditTriggers);
 //    roles[Qt::DecorationRole] = v;
 
         roles[Qt::DisplayRole] = v;
-
+roles[Qt::BackgroundRole] = QColor(Qt::blue);
 
     model2->setItemData(model2->index(0,0),roles);
     model2->setItemData(model2->index(0,1),roles);
+    auto it = new QStandardItem("ABC");
+    it->setBackground(Qt::red);
+    model2->setItem(1,0,it);
 
 //    model2->setData(model2->index(0,0),texts,Qt::DisplayRole);
 //    model2->setData(model2->index(0,0),v,Qt::DecorationRole);
@@ -67,8 +76,39 @@ view1->setEditTriggers(QAbstractItemView::AllEditTriggers);
 //    view1->setIndexWidget(model2->index(0,0),new Image2x2Widget);
 //    view1->setIndexWidget(model2->index(0,1),new Image2x2Widget);
 
-//    TableView * view2 = new TableView;
-//    view2->setModel(model2);
+    TableView * view2 = new TableView;
+
+
+    QStandardItemModel * model3 = new QStandardItemModel;
+
+//    model3->setRowCount(10);
+//    model3->setColumnCount(10);
+    QStandardItem * item11 = new QStandardItem("a");
+
+    item11->setRowCount(4);
+    item11->setColumnCount(4);
+    QList<QStandardItem*> ilist;
+    ilist<<new QStandardItem("1")<<new QStandardItem("3")
+        <<new QStandardItem("2")<<new QStandardItem("4");
+    item11->appendRow(ilist);
+    QStandardItem * item12 = new QStandardItem;
+    item12->setRowCount(4);
+    item12->setColumnCount(4);
+    model3->setItem(0,0,item11);
+    model3->setItem(0,1,item12);
+//model3->setData(model3->index(0,1),
+//                QBrush(QColor(Qt::red)), Qt::BackgroundRole);
+    QMap<int, QVariant> roles1;
+    roles1[Qt::BackgroundRole] = QBrush(QColor(Qt::blue));
+    model3->setItemData(model3->index(0,1),roles1 );
+    qDebug()<<model3->item(0,0)->child(4,3);
+    view2->setModel(model3);
+
+    qDebug()<<(model2->item(0,0)==nullptr);
+    qDebug()<<(model2->item(0,1)==nullptr);
+    qDebug()<<(model2->item(1,0)==nullptr);
+
+    qDebug()<<view2->indexWidget(model3->index(0,0));
 
 #ifdef TableWidgetSubClassSetDelegate // QTableWidget的子类设置代理不成功
     table1->setItemDelegate(delegate2);
@@ -89,7 +129,8 @@ view1->setEditTriggers(QAbstractItemView::AllEditTriggers);
     view1->setColumnWidth(1,400);
     view1->setRowHeight(1,400);
 
-    setCentralWidget(view1);
+    //setCentralWidget(view1);
+    setCentralWidget(view2);
 
 //    auto label = new QLabel("123");
 //label->setPixmap(QPixmap(":/1.jpg"));
