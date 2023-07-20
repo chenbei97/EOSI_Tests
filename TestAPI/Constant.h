@@ -9,7 +9,7 @@
 //#include <vector>
 //#endif
 
-#include "core/core.h"
+#include "core.h"
 #include <qdebug.h>
 // 便捷函数
 

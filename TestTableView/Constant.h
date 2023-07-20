@@ -80,8 +80,8 @@
     #define NewExperButtonMinHeight 100 // 新建实验的按钮最小高度
     #define PreviewPicFixedSize (QSize(700,600)) // 预览图片的固定尺寸
 
-    #define TableViewRowHeight 400
-    #define TableViewColumnWidth 400
+    #define TableViewRowHeight 150
+    #define TableViewColumnWidth 150
 
     // 单行控件的最小最大尺寸: spinbox,pushbutton,label,combobox,lineedit
     #define ComponentMinWidth 300
