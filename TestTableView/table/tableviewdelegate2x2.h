@@ -1,8 +1,9 @@
 ﻿#ifndef TABLEVIEWDELEGATE2X2_H
 #define TABLEVIEWDELEGATE2X2_H
 
-#include <QStyledItemDelegate>
+#include <qstyleditemdelegate.h>
 #include <qpainter.h>
+#include "picture.h"
 #include "tableviewwidget2x2.h"
 #include "tablemodeldata.h"
 
@@ -24,8 +25,8 @@ public:
 private:
     void paintBorder(QPainter *painter, const QStyleOptionViewItem &option) const;
     void paintPixmap(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void paintText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void paintHighlight(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paintSelectedHighlight(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paintMouseHighlight(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif // TABLEVIEWDELEGATE2X2_H

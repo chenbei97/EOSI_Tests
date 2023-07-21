@@ -1,8 +1,8 @@
 ﻿#ifndef TABLEVIEWWIDGET2X2_H
 #define TABLEVIEWWIDGET2X2_H
 
-#include "label.h"
 #include <qevent.h>
+#include "label.h"
 
 class TableViewWidget2x2: public QWidget
 {

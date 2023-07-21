@@ -3,6 +3,7 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
+CONFIG += utf8-source
 
 INCLUDEPATH += $$PWD/table
 include ($$PWD/table/table.pri)
@@ -19,14 +20,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     label.cpp \
-    main.cpp
+    main.cpp \
+    picture.cpp
 
 HEADERS += \
     Constant.h \
     Style.h \
     core.h \
     label.h \
-    mainwindow.h
+    mainwindow.h \
+    picture.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

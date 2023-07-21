@@ -9,6 +9,8 @@ private:
     QVector<TableModelData> mRoleData;
 public:
     explicit TableModelItem();
+    explicit TableModelItem(const QVariant&value,int role);
+    explicit TableModelItem(const QMap<int, QVariant> &roles);
 
     void setData(const QVariant&value,int role = Qt::UserRole+1);
     QVariant data(int role = Qt::UserRole+1) const;

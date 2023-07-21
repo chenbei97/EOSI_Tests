@@ -11,7 +11,7 @@ class TableView : public QTableView
 public:
     explicit TableView(QWidget *parent = nullptr);
     void updateGeometries() override;
-    //void rowsInserted(const QModelIndex &parent, int start, int end) override;
+    void rowsInserted(const QModelIndex &parent, int start, int end) override;
 
     void updateCellSize();
 private:

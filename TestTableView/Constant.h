@@ -32,6 +32,10 @@
 #define SplitterHandleWidth 5 // 分隔条的手柄宽度
 #define DefaultFontFamily ("Times New Roman") // 默认字体
 #define TableViewHighlightColorAlpha 100 // 单元格高亮颜色的透明度0-255之间
+#define TableViewMouseHighlightColor (QColor("#FFFD55"))
+#define TableViewSelectedHighlightColor (QColor(Qt::green))
+#define TableViewCurrentHighlightColor (QColor("#001BE8"))
+#define TableViewBorderHighlightColor (QColor(Qt::red))
 
 #ifdef SCREEN_2560X1600 // 默认按照2560X1600的尺寸
     #define DefaultFontSize 12 // 默认字体大小12号字

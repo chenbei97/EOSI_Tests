@@ -5,6 +5,16 @@ TableModelItem::TableModelItem()
 
 }
 
+TableModelItem::TableModelItem(const QVariant&value,int role)
+{
+    setData(value,role);
+}
+
+TableModelItem::TableModelItem(const QMap<int, QVariant> &roles)
+{
+    setItemData(roles);
+}
+
 void TableModelItem::setItemData(const QMap<int, QVariant> &roles)
 {
     int role;

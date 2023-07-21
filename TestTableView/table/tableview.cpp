@@ -24,9 +24,9 @@ void TableView::initGeneralConfig()
     setAlternatingRowColors(false);
     setDragEnabled(false);
     setAcceptDrops(false);
-    //setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     //setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-   // setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel); // 按像素或者按项进行滚动
+    setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel); // 按像素或者按项进行滚动
     //setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);// 取消滚动条
     setTextElideMode(Qt::ElideNone); //防止文本超过宽度出现省略号
 
@@ -39,8 +39,8 @@ void TableView::initGeneralConfig()
     //horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     horizontalHeader()->setHighlightSections(true);
     horizontalHeader()->setStretchLastSection(false);
-    horizontalHeader()->setMinimumSectionSize(TableWidgetItemMinWidth);
-    horizontalHeader()->setDefaultSectionSize(TableWidgetItemHeight);
+//    horizontalHeader()->setMinimumSectionSize(TableWidgetItemMinWidth);
+//    horizontalHeader()->setDefaultSectionSize(TableWidgetItemHeight);
 
 }
 
@@ -53,26 +53,19 @@ void TableView::updateCellSize()
 
         for(int c = 0; c <model()->columnCount(); ++ c)
             setColumnWidth(c,TableViewColumnWidth);
-
-        resize(model()->rowCount()*TableViewRowHeight,
-               model()->columnCount()*TableViewColumnWidth);
     }
 }
 
 void TableView::updateGeometries()
 {
-
-    updateCellSize();
     //LOG<<"is called";
     return QTableView::updateGeometries();
 }
 
-//void TableView::rowsInserted(const QModelIndex &parent, int start, int end)
-//{
+void TableView::rowsInserted(const QModelIndex &parent, int start, int end)
+{
 
-//    LOG<<"start = "<<start<<" end = "<<end;
-//    return QTableView::rowsInserted(parent,start,end);
-//}
+}
 
 
 

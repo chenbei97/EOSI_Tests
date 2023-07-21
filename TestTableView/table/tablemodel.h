@@ -1,6 +1,7 @@
 ﻿#ifndef TABLEMODEL_H
 #define TABLEMODEL_H
 
+#include <qcolor.h>
 #include "qabstractitemmodel.h"
 #include "tablemodelitem.h"
 
