@@ -1,13 +1,16 @@
 ﻿#include "tableview.h"
+#include <QSpinBox>
+#include "tableviewwidget2x2.h"
 
 TableView::TableView(QWidget *parent) :QTableView(parent)
 {
-
     initGeneralConfig();
-
     INIT_FONT;
-}
 
+    connect(this,&TableView::clicked,this,&TableView::onClicked);
+    connect(this,&TableView::doubleClicked,this,&TableView::onDoubleClicked);
+    connect(this,&TableView::pressed,this,&TableView::onPressed);
+}
 
 void TableView::initGeneralConfig()
 {
@@ -53,6 +56,10 @@ void TableView::updateCellSize()
 
         for(int c = 0; c <model()->columnCount(); ++ c)
             setColumnWidth(c,TableViewColumnWidth);
+
+//        for(int r = 0; r <model()->rowCount(); ++ r)
+//             for(int c = 0; c <model()->columnCount(); ++ c)
+//                 openPersistentEditor(model()->index(r,c));
     }
 }
 
@@ -67,7 +74,56 @@ void TableView::rowsInserted(const QModelIndex &parent, int start, int end)
 
 }
 
+bool TableView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
+{
+    setCurrentIndex(index);
+    //LOG<<"edit index = "<<index<<" trigger = "<<trigger <<" event = "<<event;
+    //openPersistentEditor(index);
+//event->type();
+  //  event->accept();
 
+//    if (event->type() == QEvent::MouseButtonDblClick)
+//    {
+////        LOG<<"edit mouse clicked";
+//    }
+    return QTableView::edit(index,trigger,event);
+//    return true;
+}
+
+void TableView::onClicked(const QModelIndex&index)
+{
+    //LOG<<"clicked";
+}
+
+void TableView::onDoubleClicked(const QModelIndex&index)
+{
+//    setIndexWidget(index,new TableViewWidget2x2);
+//    openPersistentEditor(index);
+
+    auto d = index.model()->data(index,Qt::DecorationRole);
+    if (d.isValid())
+    {
+        auto w = new TableViewWidget2x2;
+       auto dd = d .value<QVector<QPixmap*>>();
+       w->setAttribute(Qt::WA_DeleteOnClose);
+       w->setPixmaps(dd);
+       w->show();
+    }
+
+
+    //LOG<<"double clicked "<< indexWidget(index);
+}
+
+void TableView::onPressed(const QModelIndex&index)
+{
+    //LOG<<"pressed";
+}
+
+//void TableView::openPersistentEditor(const QModelIndex &index)
+//{
+//    auto widget = itemDelegate(index);
+
+//}
 
 
 

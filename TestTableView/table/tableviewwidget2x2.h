@@ -2,6 +2,7 @@
 #define TABLEVIEWWIDGET2X2_H
 
 #include <qevent.h>
+#include <qlayout.h>
 #include "label.h"
 
 class TableViewWidget2x2: public QWidget
@@ -15,6 +16,7 @@ public:
 
     void setPixmap(int index,QPixmap*pix);
     QPixmap* pixmap(int index) const;
+    void setPixmaps(const QVector<QPixmap*> &pixs);
     QVector<QPixmap*> pixmaps() const;
 signals:
 

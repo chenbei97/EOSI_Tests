@@ -12,12 +12,15 @@ int main(int argc, char *argv[])
     QVector<QPixmap*> iconlist;
     iconlist<<new QPixmap(":/1.jpg")<<new QPixmap(":/2.jpg")
            <<new QPixmap(":/3.jpg")<<new QPixmap(":/4.jpg");
-    QVariant v ;
-    v.setValue(iconlist);
-    roles[Qt::DecorationRole] = v;
-    roles[TableModelDataRole::SelectedItems] = 0b1010;
-    //roles[TableModelDataRole::IsCurrentItem] = 0b0000;
-    w.setItemData(0,1,roles);
+//    QVariant v ;
+//    v.setValue(iconlist);
+//    roles[Qt::DecorationRole] = v;
+//    roles[TableModelDataRole::SelectedItems] = 0b1010;
+//    //roles[TableModelDataRole::IsCurrentItem] = 0b0000;
+//    w.setItemData(0,1,roles);
+    w.setPixmaps(0,1,iconlist);
+    w.setPixmap(0,0,3,iconlist[2]);
+
     w.setData(4,0,0b1000,TableModelDataRole::CurrentItem);
 
     w.show();

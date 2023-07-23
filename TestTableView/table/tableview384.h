@@ -22,15 +22,15 @@ public:
     {return mModel->data(index,role);};
     inline QVariant data(int row,int col, int role = Qt::DisplayRole) const
     {return mModel->data(index(row,col),role);};
-    inline bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole)
-    {return mModel->setData(index,value,role);};
+    inline bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) // 不要使用setData来设置而应该使用下方的setPixmap
+    {if (role == Qt::DecorationRole) return false; return mModel->setData(index,value,role);}; // 这里设置无法保证数量一定是4还不知道位置信息,会出现越界问题
     inline bool setData(int row,int col, const QVariant &value, int role = Qt::EditRole)
-    {return mModel->setData(index(row,col),value,role);};
+    {if (role == Qt::DecorationRole) return false;return mModel->setData(index(row,col),value,role);};
 
-    inline bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles)
-    {return mModel->setItemData(index,roles);};
+    inline bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles) //setItemData同理
+    {if (roles.keys().contains(Qt::DecorationRole)) return false; return mModel->setItemData(index,roles);};
     inline bool setItemData(int row,int col, const QMap<int, QVariant> &roles)
-    {return mModel->setItemData(index(row,col),roles);};
+    {if (roles.keys().contains(Qt::DecorationRole)) return false;return mModel->setItemData(index(row,col),roles);};
     inline QMap<int, QVariant>	itemData(const QModelIndex &index) const
     {return mModel->itemData(index);};
     inline QMap<int, QVariant>	itemData(int row,int col) const
@@ -40,7 +40,13 @@ public:
     {return mModel->index(row,col);}
 
     /*定义一些常用的快捷函数*/
+    bool setPixmap(int row,int col,int pos,QPixmap*pix);
+    bool setPixmap(int row,int col,int pos,const QPixmap&pix);
     bool setPixmaps(int row,int col, const QVector<QPixmap*> &pixs);
+    bool setPixmaps(int row,int col, const QVector<QPair<int,QPixmap*>> &pixs);
+    QVector<QPixmap*> pixmaps(int row,int col) const;
+    QPixmap* pixmap(int row,int col,int pos) const;
+
     bool setCurrentItem(int row,int col,uint32_t info);
     bool setSelectedItems(int row,int col, uint32_t info);
 

@@ -3,7 +3,7 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
-CONFIG += utf8-source
+CONFIG   += utf8_source
 
 INCLUDEPATH += $$PWD/table
 include ($$PWD/table/table.pri)

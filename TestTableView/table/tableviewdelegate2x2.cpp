@@ -1,11 +1,13 @@
 ﻿#include "tableviewdelegate2x2.h"
+#include "tableview.h"
+#include <qapplication.h>
 
 void TableViewDelegate2x2::setEditorData(QWidget *editor, const QModelIndex &index) const
 {//从TableModel拿数据,data返回的是QVariant,但是模型初始化时对QVariant赋值赋的QVector<QPixmap*>
 
     QVector<QPixmap*>  icons =
             index.model()->data(index, Qt::DecorationRole).value<QVector<QPixmap*>>();
-    //LOG<<"icons = "<<icons;
+    LOG<<"icons = "<<icons;
 
     TableViewWidget2x2 *cell = static_cast<TableViewWidget2x2*>(editor);
 
@@ -19,16 +21,15 @@ void TableViewDelegate2x2::setEditorData(QWidget *editor, const QModelIndex &ind
         if (icons[3])
             cell->setPixmap(3,icons[3]);
     }
+    //return QStyledItemDelegate::setEditorData(editor,index);
 }
 
 void TableViewDelegate2x2::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 { // 这些数据实际上就是存到了TableModel内部的TableModelItem的TableModelData
     TableViewWidget2x2 *cell = static_cast<TableViewWidget2x2*>(editor);
-
     QVariant v;
     v.setValue(cell->pixmaps());
-
-//    model->setData(index, v, Qt::DecorationRole); //拿到图标的名称
+    model->setData(index, v, Qt::DecorationRole); //拿到图标的名称
 
     // 其他数据可以预设默认值,外部基本不会传递
 
@@ -39,6 +40,7 @@ void TableViewDelegate2x2::setModelData(QWidget *editor, QAbstractItemModel *mod
 //    model->setData(index, Qt::AlignCenter, Qt::TextAlignmentRole);
 //    model->setData(index, QBrush(Qt::white), Qt::BackgroundRole);
 //    model->setData(index, QBrush(Qt::black), Qt::ForegroundRole);
+    //return QStyledItemDelegate::setModelData(editor,model,index);
 }
 
 
@@ -64,6 +66,9 @@ bool TableViewDelegate2x2::editorEvent(QEvent *event, QAbstractItemModel *model,
 
             QVector<QPixmap*> icons =
                     index.model()->data(index, Qt::DecorationRole).value<QVector<QPixmap*>>();
+
+//            auto tableview = static_cast<const TableView*>(option.widget);
+//            LOG<<tableview->rowHeight(0); // 可以拿到代理的父类TableView,能做什么事这里留待思考~
 
             if (icons.count() == 4)
             {
@@ -95,8 +100,9 @@ QWidget *TableViewDelegate2x2::createEditor(QWidget *parent,
     Q_UNUSED(option);
     Q_UNUSED(index);
     auto editor = new TableViewWidget2x2(parent);
-    //editor->installEventFilter(const_cast<TableViewWidget2x2*>(this));
+    //LOG<<"editor = "<<editor;
     return editor;
+    //return QStyledItemDelegate::createEditor(parent,option,index);
 }
 
 void  TableViewDelegate2x2::paint(QPainter *painter, const QStyleOptionViewItem &option,
@@ -109,7 +115,8 @@ void  TableViewDelegate2x2::paint(QPainter *painter, const QStyleOptionViewItem 
     paintSelectedHighlight(painter,option,index); // 3. 已被选中单元格的高亮绘制
 
     paintMouseHighlight(painter,option,index); // 4. 鼠标点击的高亮区域绘制
-
+//        QStyleOptionFrame opt;
+//        QApplication::style()->drawControl(QStyle::CE_ShapedFrame,&opt, painter);
 }
 
 void TableViewDelegate2x2::paintMouseHighlight(QPainter *painter, const QStyleOptionViewItem &option,
