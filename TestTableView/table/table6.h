@@ -8,7 +8,6 @@ class Table6 : public Table
     Q_OBJECT
 public:
     explicit Table6(QWidget *parent = nullptr);
-    void initialize() override;
 };
 
 

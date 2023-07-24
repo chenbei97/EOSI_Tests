@@ -1,12 +1,14 @@
-#ifndef TABLEVIEW96_H
-#define TABLEVIEW96_H
+﻿#ifndef TABLE96_H
+#define TABLE96_H
 
 
-class TableView96
+#include "table.h"
+
+class Table96 : public Table
 {
     Q_OBJECT
 public:
-    TableView96();
+    explicit Table96(QWidget *parent = nullptr);
 };
 
-#endif // TABLEVIEW96_H
+#endif // TABLE96_H

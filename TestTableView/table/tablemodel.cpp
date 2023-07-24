@@ -99,8 +99,8 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
 
     role = (role == Qt::EditRole) ? Qt::DisplayRole : role;
     auto item = mItems[index.row()].at(index.column());
-
     item.setData(value,role);
+
     LOG<<"item.data("<<role<<") = "<<item.data(role);
     mItems[index.row()].replace(index.column(),item);
 

@@ -1,6 +1,6 @@
-#include "tableview96.h"
+﻿#include "table96.h"
 
-TableView96::TableView96()
+Table96::Table96(QWidget *parent) : Table(parent)
 {
-
+    setItemCount(8,12);
 }

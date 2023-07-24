@@ -16,6 +16,7 @@ public:
     bool edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event) override;
 //    void openPersistentEditor(const QModelIndex &index);
     void updateCellSize();
+    //void keyPressEvent(QKeyEvent*e) override;
 private:
     void initGeneralConfig();
 private slots:

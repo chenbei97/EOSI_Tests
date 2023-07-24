@@ -21,7 +21,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     label.cpp \
     main.cpp \
-    picture.cpp
+    picture.cpp \
 
 HEADERS += \
     Constant.h \

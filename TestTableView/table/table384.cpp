@@ -1,6 +1,6 @@
-﻿#include "tableview384.h"
+﻿#include "table384.h"
 
-TableView384::TableView384(QWidget *parent) : QWidget(parent)
+Table384::Table384(QWidget *parent) : QWidget(parent)
 {
     mView = new TableView;
     //mView->setEditTriggers(TableView::DoubleClicked);
@@ -22,12 +22,12 @@ TableView384::TableView384(QWidget *parent) : QWidget(parent)
     lay->addWidget(mView);
     resize(mView->size());
 
-    connect(this,&TableView384::currentItemChanged,this,&TableView384::onCurrentItemChanged);
+    connect(this,&Table384::currentItemChanged,this,&Table384::onCurrentItemChanged);
 
     INIT_FONT;
 }
 
-bool TableView384::setPixmap(int row,int col,int pos,QPixmap*pix)
+bool Table384::setPixmap(int row,int col,int pos,QPixmap*pix)
 {
     QVariant var;
     auto variant = mModel->data(index(row,col),Qt::DecorationRole);
@@ -45,25 +45,25 @@ bool TableView384::setPixmap(int row,int col,int pos,QPixmap*pix)
     return mModel->setData(index(row,col),var,Qt::DecorationRole);
 }
 
-bool TableView384::setPixmap(int row,int col,int pos,const QPixmap&pix)
+bool Table384::setPixmap(int row,int col,int pos,const QPixmap&pix)
 {
     return setPixmap(row,col,pos,new QPixmap(pix));
 }
 
 
-QPixmap* TableView384::pixmap(int row,int col, int pos) const
+QPixmap* Table384::pixmap(int row,int col, int pos) const
 {
     return pixmaps(row,col)[pos];
 }
 
-QVector<QPixmap*> TableView384::pixmaps(int row,int col) const
+QVector<QPixmap*> Table384::pixmaps(int row,int col) const
 {
     auto pixs = mModel->data(index(row,col),Qt::DecorationRole).value<QVector<QPixmap*>>();
     Q_ASSERT(pixs.count() == 4);
     return  pixs;
 }
 
-bool TableView384::setPixmaps(int row,int col, const QVector<QPixmap*>& pixs)
+bool Table384::setPixmaps(int row,int col, const QVector<QPixmap*>& pixs)
 { // 只用于传4张图片的,满足条件就是全部覆盖无需再先取出数据
     if (pixs.count() !=4 ) return false;
     QVariant v;
@@ -71,7 +71,7 @@ bool TableView384::setPixmaps(int row,int col, const QVector<QPixmap*>& pixs)
     return mModel->setData(index(row,col),v,Qt::DecorationRole);
 }
 
-bool TableView384::setPixmaps(int row,int col, const QVector<QPair<int,QPixmap*>> &pixs)
+bool Table384::setPixmaps(int row,int col, const QVector<QPair<int,QPixmap*>> &pixs)
 { // 传递1-4张均可 ,pixs是指定位置绑定1张图
     if (pixs.count()<=0 || pixs.count() > 4) return false;
 
@@ -104,14 +104,14 @@ bool TableView384::setPixmaps(int row,int col, const QVector<QPair<int,QPixmap*>
     return true;
 }
 
-bool TableView384::setSelectedItems(int row, int col, uint32_t info)
+bool Table384::setSelectedItems(int row, int col, uint32_t info)
 {
     if (info < 0 || info > 15)  // 枚举值的范围0b0000-0b1111
         return false;
     return mModel->setData(index(row,col),info,TableModelDataRole::SelectedItems);
 }
 
-bool TableView384::setCurrentItem(int row,int col,uint32_t info)
+bool Table384::setCurrentItem(int row,int col,uint32_t info)
 {// 设置当前项
     if (info != 0 && info != 0b1000 && info != 0b0100 && info != 0b0010 && info != 0b0001)
         return false;
@@ -123,7 +123,7 @@ bool TableView384::setCurrentItem(int row,int col,uint32_t info)
 }
 
 
-void TableView384::onCurrentItemChanged(int row,int col)
+void Table384::onCurrentItemChanged(int row,int col)
 { // 一旦当前项改变,其它所有单元格包括子单元格的CurrentItem都要置零
     for (int r = 0; r <mModel->rowCount(); ++r ){
         for (int c= 0; c < mModel->columnCount(); ++c){

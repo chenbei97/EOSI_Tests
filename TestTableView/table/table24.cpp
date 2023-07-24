@@ -1,6 +1,6 @@
-#include "tableview24.h"
+﻿#include "table24.h"
 
-TableView24::TableView24(QWidget *parent) : QWidget(parent)
+Table24::Table24(QWidget *parent) : Table(parent)
 {
-
+    setItemCount(4,6);
 }

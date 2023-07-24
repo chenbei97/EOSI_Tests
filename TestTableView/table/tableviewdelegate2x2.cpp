@@ -47,9 +47,11 @@ void TableViewDelegate2x2::setModelData(QWidget *editor, QAbstractItemModel *mod
 bool TableViewDelegate2x2::editorEvent(QEvent *event, QAbstractItemModel *model,
                                    const QStyleOptionViewItem &option, const QModelIndex &index)
 { // TableView的cell的鼠标事件可以在这里拿到,但不会传递给代理组件
-    if(event->type()  == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonDblClick)
+    if(event->type()  == QEvent::MouseButtonPress
+            || event->type() == QEvent::MouseButtonDblClick)
     {
         QMouseEvent * mouse = static_cast<QMouseEvent*>(event);
+
         model->setData(index,mouse->pos(),TableModelDataRole::MousePosition);
 
         if (event->type() == QEvent::MouseButtonDblClick)
@@ -90,6 +92,27 @@ bool TableViewDelegate2x2::editorEvent(QEvent *event, QAbstractItemModel *model,
             }
         }
         event->accept();
+    }
+
+     if (event->type() == QEvent::KeyPress)
+    {
+            QKeyEvent * e = static_cast<QKeyEvent*>(event);
+            auto tableview = static_cast<const TableView*>(option.widget);
+            auto idx = tableview->currentIndex();
+            LOG<<"cur idx = "<<idx<<" key = "<<e->key();
+            if (e->key() == Qt::Key_Left){
+                 int col = (idx.column()-1<0)?0:idx.column()-1;
+
+            } else if (e->key() ==Qt::Key_Right){
+                int col = (idx.column()+1>=model->columnCount())?
+                            model->columnCount()-1:idx.column()+1; // 5+1>=6? 5: 6=> 5
+            } else if (e->key() ==Qt::Key_Up){
+                int row = (idx.row()-1<0)? 0:idx.row()-1;
+
+            } else if (e->key() ==Qt::Key_Down){
+                int row = (idx.row()+1>=model->rowCount())?
+                            model->rowCount()-1:idx.row()+1;
+            }
     }
     return QStyledItemDelegate::editorEvent(event,model,option,index);
 }
@@ -236,6 +259,7 @@ void TableViewDelegate2x2::paintSelectedHighlight(QPainter *painter, const QStyl
     painter->setPen(pen);
 
     uint32_t  selected = index.model()->data(index,TableModelDataRole::SelectedItems).toUInt();
+    LOG<<"selected = "<<selected;
     auto scolor = index.model()->data(index,TableModelDataRole::SelectedColor).value<QColor>();
     if (!scolor.isValid()) {
         scolor = TableViewSelectedHighlightColor;
@@ -298,6 +322,7 @@ void TableViewDelegate2x2::paintSelectedHighlight(QPainter *painter, const QStyl
 
     /*绘制当前具有焦点的项*/
     uint32_t isCurrent = index.model()->data(index,TableModelDataRole::CurrentItem).toUInt();
+    LOG<<"isCurrent = "<<isCurrent<<" index = "<<index;
     auto ccolor = index.model()->data(index,TableModelDataRole::CurrentColor).value<QColor>();
     if (!ccolor.isValid()) {
         ccolor = TableViewCurrentHighlightColor;

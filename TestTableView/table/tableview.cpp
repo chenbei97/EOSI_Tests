@@ -16,7 +16,8 @@ void TableView::initGeneralConfig()
 {
     setSelectionBehavior(QAbstractItemView::SelectItems);//选中时只选中1个项
     setSelectionMode(QAbstractItemView::SingleSelection); // 选择项只能选中1个,再点另一个会取消选中之前的
-    setEditTriggers(QTableView::NoEditTriggers);
+//    setEditTriggers(QTableView::AnyKeyPressed| QTableView::EditKeyPressed);
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     setShowGrid(true);
     setGridStyle(Qt::DashLine);
@@ -100,15 +101,15 @@ void TableView::onDoubleClicked(const QModelIndex&index)
 //    setIndexWidget(index,new TableViewWidget2x2);
 //    openPersistentEditor(index);
 
-    auto d = index.model()->data(index,Qt::DecorationRole);
-    if (d.isValid())
-    {
-        auto w = new TableViewWidget2x2;
-       auto dd = d .value<QVector<QPixmap*>>();
-       w->setAttribute(Qt::WA_DeleteOnClose);
-       w->setPixmaps(dd);
-       w->show();
-    }
+//    auto d = index.model()->data(index,Qt::DecorationRole);
+//    if (d.isValid())
+//    {
+//        auto w = new TableViewWidget2x2;
+//       auto dd = d .value<QVector<QPixmap*>>();
+//       w->setAttribute(Qt::WA_DeleteOnClose);
+//       w->setPixmaps(dd);
+//       w->show();
+//    }
 
 
     //LOG<<"double clicked "<< indexWidget(index);
@@ -123,6 +124,32 @@ void TableView::onPressed(const QModelIndex&index)
 //{
 //    auto widget = itemDelegate(index);
 
+//}
+
+//void TableView::keyPressEvent(QKeyEvent *e)
+//{
+//    LOG<<"e.key() = "<<e->key();
+//    if (model()) {
+//        auto idx = currentIndex();
+//        if (e->key() == Qt::Key_Left){
+//             int col = (idx.column()-1<0)?0:idx.column()-1;
+//             setCurrentIndex(model()->index(idx.row(),col));
+//        } else if (e->key() ==Qt::Key_Right){
+//            int col = (idx.column()+1>=model()->columnCount())?
+//                        model()->columnCount()-1:idx.column()+1; // 5+1>=6? 5: 6=> 5
+//            setCurrentIndex(model()->index(idx.row(),col));
+//        } else if (e->key() ==Qt::Key_Up){
+//            int row = (idx.row()-1<0)? 0:idx.row()-1;
+//            setCurrentIndex(model()->index(row,idx.column()));
+//        } else if (e->key() ==Qt::Key_Down){
+//            int row = (idx.row()+1>=model()->rowCount())?
+//                        model()->rowCount()-1:idx.row()+1;
+//            setCurrentIndex(model()->index(row,idx.column()));
+//    }
+//        //e->accept();
+//    }
+//    //e->ignore();
+//    return QTableView::keyPressEvent(e);
 //}
 
 

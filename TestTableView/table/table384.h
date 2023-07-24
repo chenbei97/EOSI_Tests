@@ -1,5 +1,5 @@
-﻿#ifndef TABLEVIEW384_H
-#define TABLEVIEW384_H
+﻿#ifndef TABLE384_H
+#define TABLE384_H
 
 #include <qlayout.h>
 #include <qitemselectionmodel.h>
@@ -8,7 +8,7 @@
 #include "tableviewdelegate2x2.h"
 
 
-class TableView384 : public QWidget
+class Table384 : public QWidget
 {
     Q_OBJECT
     TableViewDelegate2x2 * mDelegate;
@@ -16,7 +16,7 @@ class TableView384 : public QWidget
     TableView * mView;
     QItemSelectionModel * mSelection;
 public:
-    explicit TableView384(QWidget *parent = nullptr);
+    explicit Table384(QWidget *parent = nullptr);
 
     inline QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const
     {return mModel->data(index,role);};
@@ -57,4 +57,4 @@ private slots:
     void onCurrentItemChanged(int row,int col);
 };
 
-#endif // TABLEVIEW384_H
+#endif // TABLE384_H

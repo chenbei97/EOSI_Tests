@@ -1,16 +1,13 @@
-#ifndef TABLEVIEW24_H
-#define TABLEVIEW24_H
+﻿#ifndef TABLE24_H
+#define TABLE24_H
 
-#include <QWidget>
+#include "table.h"
 
-class TableView24 : public QWidget
+class Table24 : public Table
 {
     Q_OBJECT
 public:
-    explicit TableView24(QWidget *parent = nullptr);
-
-signals:
-
+    explicit Table24(QWidget *parent = nullptr);
 };
 
-#endif // TABLEVIEW24_H
+#endif // TABLE24_H

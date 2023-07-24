@@ -9,35 +9,31 @@ class Table : public QWidget
 {
     Q_OBJECT
 protected:
-    QStyledItemDelegate * mDelegate;
-    QAbstractItemModel * mModel;
     TableView * mView;
     QItemSelectionModel * mSelection;
+    QStandardItemModel * mModel;
+    QStyledItemDelegate  * mDelegate;
+    void setItemCount(int rows,int cols);
+    void setDelegate(QStyledItemDelegate*delegate);
 public:
     explicit Table(QWidget *parent = nullptr);
+    explicit Table(int rows,int cols,QWidget *parent = nullptr);
 
-    virtual void initialize() {};
 
-    virtual inline QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const
-    {return mModel->data(index,role);};
-    virtual inline QVariant data(int row,int col, int role = Qt::DisplayRole) const
-    {return mModel->data(index(row,col),role);};
-    virtual inline bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole)
-    { return mModel->setData(index,value,role);};
-    virtual inline bool setData(int row,int col, const QVariant &value, int role = Qt::EditRole)
-    {return mModel->setData(index(row,col),value,role);};
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual QVariant data(int row,int col, int role = Qt::DisplayRole) const;
+    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    virtual bool setData(int row,int col, const QVariant &value, int role = Qt::EditRole);
 
-    virtual inline bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles)
-    {return mModel->setItemData(index,roles);};
-    virtual inline bool setItemData(int row,int col, const QMap<int, QVariant> &roles)
-    {return mModel->setItemData(index(row,col),roles);};
-    virtual inline QMap<int, QVariant>	itemData(const QModelIndex &index) const
-    {return mModel->itemData(index);};
-    virtual inline QMap<int, QVariant>	itemData(int row,int col) const
-    {return mModel->itemData(index(row,col));};
+    virtual  bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles);
+    virtual  bool setItemData(int row,int col, const QMap<int, QVariant> &roles);
 
-    inline QModelIndex index(int row,int col) const
-    {return mModel->index(row,col);}
+    virtual  QMap<int, QVariant>	itemData(const QModelIndex &index) const;
+    virtual  QMap<int, QVariant>	itemData(int row,int col) const;
+
+
+     QModelIndex index(int row,int col) const;
+
 
     /*定义一些常用的快捷函数*/
     bool setPixmap(int row,int col,QPixmap*pix);

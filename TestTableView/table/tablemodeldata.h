@@ -11,12 +11,16 @@
 */
 /*自定义的数据角色*/
 enum TableModelDataRole {
+    /*以下角色用于2x2代理*/
     MousePosition = Qt::UserRole + 1, // 项中鼠标点击的位置
     HighlightColor = Qt::UserRole + 2,// 鼠标点击的项的高亮颜色
     SelectedColor = Qt::UserRole + 3, // 已经被选中项的高亮颜色
     CurrentColor = Qt::UserRole+4, // 当前焦点项的高亮颜色
     SelectedItems = Qt::UserRole + 5, // enum<TableViewCellSelected>的所有枚举值
     CurrentItem = Qt::UserRole + 6, // 当前项,唯一值或者没有,None,Top,Left,Right,Bottom有效,其他忽略
+    /*以下角色用于label代理*/
+    isSelected = Qt::UserRole + 7, // 简化为只需传递bool值
+    isCurrent = Qt::UserRole + 8, // 简化为只需传递bool值
 };
 
 /*子单元格的选中信息 2x2x2x2=16种情况*/
