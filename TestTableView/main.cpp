@@ -9,11 +9,29 @@
 void test1();
 void test1(TableModel&m,const QMap<int, QVariant>&roles);
 void app1();
+void test_384();
+void test_84();
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //app1();
-    Table_384 w;
+
+
+//    w.setData(0,1,QPixmap(":/1.jpg"),Qt::DecorationRole);
+//    w.setData(0,1,true,TableModelDataRole::isSelected);
+//    w.setData(3,1,true,TableModelDataRole::isSelected);
+//    w.setData(3,5,true,TableModelDataRole::isSelected);
+//    w.setData(1,3,true,TableModelDataRole::isCurrent);
+//    w.setSelectedItem(2,2);
+//    w.setPixmap(0,1,QPixmap(":/1.jpg"));
+//    w.setCurrentItem(3,3);
+
+
+    return a.exec();
+}
+
+void test_384()
+{
+    Table384 w;
 
     QMap<int, QVariant> roles;
     QVector<QPixmap*> iconlist;
@@ -26,26 +44,34 @@ int main(int argc, char *argv[])
     roles[TableModelDataRole::HighlightColor] = QColor(Qt::red);
 
     w.setPixmaps(0,1,iconlist);
+    w.setPixmap(0,2,1,iconlist[0]);
     w.setPixmap(0,2,1,iconlist[1]);
-    w.setCurrent(3,3,0b0100);
-     w.setCurrent(3,4,0b0100);
-    w.pixmap(0,1,1);
-   // w.pixmap(0,1);
-
-//    w.setData(0,1,QPixmap(":/1.jpg"),Qt::DecorationRole);
-//    w.setData(0,1,true,TableModelDataRole::isSelected);
-//    w.setData(3,1,true,TableModelDataRole::isSelected);
-//    w.setData(3,5,true,TableModelDataRole::isSelected);
-//    w.setData(1,3,true,TableModelDataRole::isCurrent);
-//    w.setSelectedItem(2,2);
-//    w.setPixmap(0,1,QPixmap(":/1.jpg"));
-//    w.setCurrentItem(3,3);
-
+    w.setCurrentItems(3,3,0b0100);
+     w.setSelectedItems(3,4,0b0100);
+     w.setSelectedItems(5,4,0b0100);
+     w.setSelectedItems(6,4,0b0100);
+     w.setCurrentItems(2,3,0b0100);
+     qDebug()<<w.pixmap(0,1,1);
     w.show();
-
-    return a.exec();
 }
 
+void test_84()
+{
+    Table96 w;
+    QMap<int, QVariant> roles;
+    QVector<QPixmap*> iconlist;
+    iconlist<<new QPixmap(":/1.jpg")<<new QPixmap(":/2.jpg")
+           <<new QPixmap(":/3.jpg")<<new QPixmap(":/4.jpg");
+
+    w.setPixmap(0,0,iconlist[0]);
+    w.setCurrentItem(0,1);
+    w.setSelectedItem(0,3);
+    w.setSelectedItem(1,3);
+    w.setCurrentItem(4,3);
+    qDebug()<<w.pixmap(0,1);
+    qDebug()<<w.pixmap(0,1,1);
+w.show();
+}
 void app1()
 {
     //test1();

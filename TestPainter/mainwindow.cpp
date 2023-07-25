@@ -41,36 +41,36 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
 #define Log(s) (qDebug()<<QString("%1 = ").arg(s))
 
-#define StylePainter 0
-#define FillPath 0
-#define FillRect 0
+// #define StylePainter 0
+// #define FillPath 0
+// #define FillRect 0
 
 #define DrawPath 0
-#define DrawRects 0
+// #define DrawRects 0
 
-#define DrawLine 0
-#define DrawImage 0
+// #define DrawLine 0
+// #define DrawImage 0
 
-#define DrawEllipse 0
-#define DrawPoints
+// #define DrawEllipse 0
+// #define DrawPoints
 
-#define DrawPolyLine 0
-#define DrawPolygon 0
-#define DrawConvexPolygon 0
+// #define DrawPolyLine 0
+// #define DrawPolygon 0
+// #define DrawConvexPolygon 0
 
-#define DrawArc 0
-#define DrawChord 0
-#define DrawPie 0
+// #define DrawArc 0
+// #define DrawChord 0
+// #define DrawPie 0
 
-#define  DrawText 0
-#define SetViewPort 0
-#define SetWindow 0
-#define SetWindowAndViewPort 0
+// #define  DrawText 0
+// #define SetViewPort 0
+// #define SetWindow 0
+// #define SetWindowAndViewPort 0
 
 //#define SetWindowBeforeViewPort 0
-#define SetViewPortBeforeWindow 0
+// #define SetViewPortBeforeWindow 0
 //#define  DrawPathBeforeSet 0
-#define  DrawPathAfterSet 0
+// #define  DrawPathAfterSet 0
 
 //#define ReadProperties 0
 

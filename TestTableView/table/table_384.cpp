@@ -1,10 +1,32 @@
 ﻿#include "table_384.h"
 
-Table_384::Table_384(QWidget *parent) : Table(parent)
+Table_384::Table_384(QWidget *parent) : QWidget(parent)
 {
-    setDelegate(new TableViewDelegate2x2);
-    setItemCount(8,12);
+    mView = new TableView;
+    //mView->setEditTriggers(TableView::DoubleClicked);
+    mDelegate = new TableViewDelegate2x2;
+    mModel = new TableModel(mView);
+    mModel->setItemCount(8,12);
+    mSelection = new QItemSelectionModel(mModel);
+
+    mView->setItemDelegate(mDelegate);
+    mView->setModel(mModel);
+    mView->setSelectionModel(mSelection);
+
+    mView->updateCellSize();
+
+    QVBoxLayout * lay = new QVBoxLayout(this);
+    lay->setMargin(0);
+    lay->setSpacing(0);
+
+    lay->addWidget(mView);
+    resize(mView->size());
+
+    connect(this,&Table_384::currentItemChanged,this,&Table_384::onCurrentItemChanged);
+
+    INIT_FONT;
 }
+
 bool Table_384::setPixmap(int row,int col,int pos,QPixmap*pix)
 {
     QVariant var;
@@ -82,23 +104,33 @@ bool Table_384::setPixmaps(int row,int col, const QVector<QPair<int,QPixmap*>> &
     return true;
 }
 
-bool Table_384::setSelected(int row, int col, uint32_t info)
+bool Table_384::setSelectedItems(int row, int col, uint32_t info)
 {
     if (info < 0 || info > 15)  // 枚举值的范围0b0000-0b1111
         return false;
     return mModel->setData(index(row,col),info,TableModelDataRole::SelectedItems);
 }
 
-bool Table_384::setCurrent(int row,int col,uint32_t info)
+bool Table_384::setCurrentItem(int row,int col,uint32_t info)
 {// 设置当前项
     if (info != 0 && info != 0b1000 && info != 0b0100 && info != 0b0010 && info != 0b0001)
         return false;
 
     bool r =  mModel->setData(index(row,col),info,TableModelDataRole::CurrentItem);
-    if (r){
-         emit currentItemChanged(row,col); // 当前项只能有1个
-        LOG<<"1212222";
-    }
+    if (r) emit currentItemChanged(row,col); // 当前项只能有1个
 
     return r;
+}
+
+
+void Table_384::onCurrentItemChanged(int row,int col)
+{ // 一旦当前项改变,其它所有单元格包括子单元格的CurrentItem都要置零
+    for (int r = 0; r <mModel->rowCount(); ++r ){
+        for (int c= 0; c < mModel->columnCount(); ++c){
+            if (r == row && c == col )
+                continue;
+            mModel->setData(index(r,c),0,TableModelDataRole::CurrentItem);
+            //LOG<<"row = "<<row<<" col = "<<col;
+        }
+    }
 }
