@@ -45,7 +45,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 // #define FillPath 0
 // #define FillRect 0
 
-#define DrawPath 0
+//#define DrawPath 0
 // #define DrawRects 0
 
 // #define DrawLine 0
@@ -62,7 +62,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 // #define DrawChord 0
 // #define DrawPie 0
 
-// #define  DrawText 0
+ #define  DrawText 0
 // #define SetViewPort 0
 // #define SetWindow 0
 // #define SetWindowAndViewPort 0
