@@ -52,7 +52,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 // #define DrawImage 0
 
 // #define DrawEllipse 0
-// #define DrawPoints
+ #define DrawPoints
 
 // #define DrawPolyLine 0
 // #define DrawPolygon 0
@@ -62,7 +62,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 // #define DrawChord 0
 // #define DrawPie 0
 
- #define  DrawText 0
+ //#define  DrawText 0
 // #define SetViewPort 0
 // #define SetWindow 0
 // #define SetWindowAndViewPort 0
