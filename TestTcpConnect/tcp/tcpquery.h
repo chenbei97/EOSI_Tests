@@ -2,6 +2,7 @@
 #define TCPQUERY_H
 
 #include <QObject>
+#include <QMessageBox>
 #include "tcploader.h"
 
 class TcpQuery : public QObject
@@ -12,8 +13,12 @@ public:
     bool exec(int frame);
     QString result() const;
     QString error() const;
+    QString errorCode() const;
 private:
     TcpSocket * socket;
+    QString mIP;
+    int mPort;
+    TcpErrorCode mErrorCode;
 signals:
 
 };

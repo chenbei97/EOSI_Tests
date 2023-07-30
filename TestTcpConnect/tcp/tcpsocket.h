@@ -2,15 +2,32 @@
 #define TCPSOCKET_H
 
 #include <QTcpSocket>
+#include <QHostAddress>
+#include <QApplication>
+#include <QTimer>
+#include <QThread>
+#include <QEventLoop>
+#include <QTimer>
+#include <QMessageBox>
 #include "tcpdealer.h"
 
 enum TcpErrorCode {
-    NoResponse = -1,
-    EmptyData = -2,
-    FrameError = -3,
-    RequestError = -4,
-    NoError=1,
+    EmptyDataError,
+    FrameError,
+    RequestError,
+    ResponseError,
+    UnConnectedError,
+    NoError,
 };
+static const char* TcpErrorString[] = {
+    "EmptyDataError",
+    "FrameError",
+    "RequestError",
+    "ResponseError",
+    "UnConnectedError",
+    "NoError",
+};
+
 Q_ENUMS(TcpErrorCode)
 Q_DECLARE_METATYPE(TcpErrorCode)
 
@@ -29,6 +46,7 @@ public:
     void disconnectFromHost();
 
     bool isOpen() const;
+    bool isConnected() const;
 
     bool waitForConnected(int msecs = 30000);
 
@@ -40,11 +58,15 @@ public:
     QString error() const;
 private:
     QTcpSocket * socket = nullptr;
-    int command;
+    int command ;
     QByteArray message;
     QHash<int,QString> data;
     TcpDealer * dealer;
+    bool mConnected;
     void onReadyReadSlot();
+
+//    QTimer timer;
+
 signals:
     void commandChanged(int);
 };

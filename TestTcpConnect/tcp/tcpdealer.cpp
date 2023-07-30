@@ -20,7 +20,6 @@ TcpDealer::TcpDealer(const QByteArray&d,QObject *parent)
 
 void TcpDealer::setData(const QByteArray&d)
 {
-    qDebug()<<"data = "<<d;
     if (d != Data) {
         emit dataChanged();
         Data = d;

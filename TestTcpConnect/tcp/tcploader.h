@@ -12,9 +12,15 @@ public:
     static TcpLoader& instance();
     void open(const QString &ip, quint16 port,
               QIODevice::OpenMode openMode = QIODevice::ReadWrite);
-    bool isOpen() const;
+    bool isOpen() const; // 不能用于判断连接上
+    bool isConnected() const;
+
+    QString ip() const;
+    int port() const;
 private:
     TcpSocket * mSocket = nullptr;
+    QString mIP;
+    int mPort;
 private:
     explicit TcpLoader(QObject *parent = nullptr);
     TcpLoader(const TcpLoader&){}
