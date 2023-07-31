@@ -16,7 +16,7 @@ void TcpSocket::onReadyReadSlot()
 
 QString TcpSocket::result() const
 { // 用于查询完可以得到结果,可以是空的,也可能还没有command
-    // 如果是因为未连接,帧和请求错误,command尚未创建
+    // 如果是因为各种错误,command可能尚未创建
     if (data.find(command) == data.end()) return "";
     return *data.find(command);;
 }

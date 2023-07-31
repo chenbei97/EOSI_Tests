@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     TcpLoader* instance = &TcpLoader::instance();
-    instance->open("192.168.31.36",3000); // 192.168.31.36 127.0.0.1
+    instance->open("192.168.1.168",3000); // 192.168.31.36 127.0.0.1 192.168.1.168
     //qDebug()<<"instance's addr = "<<instance<<" isOpen? "<< instance->isOpen();
 
         Filter * filter = new Filter; // 必须是指针,临时对象不起作用

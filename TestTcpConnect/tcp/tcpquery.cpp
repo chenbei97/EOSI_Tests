@@ -25,7 +25,7 @@ bool TcpQuery::exec(int frame)
                                           QMessageBox::Yes | QMessageBox::No);
              if (ret == QMessageBox::Yes) {
                  socket->connectToHost(mIP, mPort);
-                 bool r = socket->waitForConnected(20000);
+                 r = socket->waitForConnected(20000);
                  if (!r) QMessageBox::critical(nullptr,"错误","重连失败!",QMessageBox::Ok);
                  else break;
              }
