@@ -71,6 +71,14 @@ void DBController::createTable()
 
 bool DBController::haveTable()
 {
+    auto c = "select * from experments";
+    mExecuter.exec(c);
+    mExecuter.first();
+
+    if (!mExecuter.isValid())
+        return false;
+
+
     return true;
 }
 
