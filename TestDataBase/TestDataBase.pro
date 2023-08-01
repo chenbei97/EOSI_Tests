@@ -23,6 +23,7 @@ SOURCES += \
 
 HEADERS += \
     dbcontroller.h \
+    dbsql.h \
     mainwindow.h
 
 # Default rules for deployment.

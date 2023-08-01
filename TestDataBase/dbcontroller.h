@@ -4,52 +4,50 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlQuery>
-
-static const char * ExpermentTableName = "experments";
-static const char * ExpermentFields[] = {
-    "type",
-    "datetime",
-    "name",
-    "describe",
-};
+#include <QSqlError>
+#include <QSqlRecord>
+#include <QDebug>
+#include "dbsql.h"
 
 class DBController :  QObject
 {
     Q_OBJECT
 public:
+    enum SQLType {SQLite,MySQL};
     static DBController& instance() {
         static DBController instance;
         return instance;
     }
 
-    void openMysql(const QString&db,const QString&user,const QString&pwd,const QString& ip, int port);
-    void openSqlite(const QString& dbpath);
+    void open(const QString &db, const QString &user="", const QString &pwd="",
+              const QString &ip="", int port=-1, SQLType type = SQLite);
 
-    const QSqlDatabase mysql() const; // 设定const 不允许外部操作
-    const QSqlDatabase sqlite() const;
+    const QSqlDatabase database(SQLType type = SQLite) const;
 
-    void closeMysql();
-    void closeSqlite();
+    void close(SQLType type= SQLite);
 
-    bool mysqlIsOpen() const;
-    bool sqliteIsOpen() const;
+    bool isOpen(SQLType type = SQLite) const;
 
-    void createTable();
-    bool haveTable();
+    bool createTable(SQLType type = SQLite);
+    bool haveTable(SQLType type = SQLite);
 
-    void addField();
-    void removeField();
-    bool haveField();
+    bool addRecord(const QVector<QPair<QString,QString>>&pairs,SQLType type = SQLite);
+    bool addRecord(const QStringList&keys,const QVector<QStringList> &multivalues,SQLType type = SQLite);
 
-    void addRecord();
+    int tableRows(SQLType type = SQLite) ;
+    int tableColumns(SQLType type = SQLite) ;
+
+    bool haveField(const QString&field,SQLType type = SQLite);
+
     void updateRecord();
     void removeRecord();
 
 private:
     explicit DBController(QObject* parent = 0);
+    void toggleSql(SQLType type);
     QSqlDatabase mMysqlDataBase;
     QSqlDatabase mSqliteDataBase;
-    QSqlQuery mExecuter;
+    QSqlQuery query;
 };
 
 #endif // DBCONTROLLER_H
