@@ -13,15 +13,16 @@ MainWindow::MainWindow(QWidget *parent)
     db->createTable(DBController::MySQL);
 
 
-    qDebug()<<"mysql isopen? "<<db->isOpen(DBController::MySQL)
-           <<" sqlite isopen? "<<db->isOpen();
+//    qDebug()<<"mysql isopen? "<<db->isOpen(DBController::MySQL)
+//           <<" sqlite isopen? "<<db->isOpen();
 
     QString keys,values;
     QVector<QPair<QString,QString>>pairs = {
-        {"type","sdjfks"},{"datetime","3ijks"},{"channel","jklsd9"}
+        {"type","sdjfks"},{"datetime",QDateTime::currentDateTime().toString("yyyy-MM-dd hh::mm::ss")},{"channel","jklsd9"}
     };
     db->addRecord(pairs);
     db->addRecord(pairs,DBController::MySQL);
+
 //    foreach (auto pair, pairs) {
 //        keys.append(pair.first);
 //        keys.append(',');
@@ -33,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
 //    keys.chop(1);
 //    qDebug()<<keys<<values;
 
-    QStringList kk = {"datetime","name","description"};
+    QStringList kk = {"channel","name","description"};
     QVector<QStringList> vv = {
         {"1","3","5"},
         {"2","4","6"},
@@ -42,16 +43,26 @@ MainWindow::MainWindow(QWidget *parent)
     db->addRecord(kk,vv);
     db->addRecord(kk,vv,DBController::MySQL);
 
-    qDebug()<<"mysql tables rows = "<<db->tableRows(DBController::MySQL)
-        <<" cols = "<<db->tableColumns(DBController::MySQL);
+//    qDebug()<<"mysql tables rows = "<<db->tableRows(DBController::MySQL)
+//        <<" cols = "<<db->tableColumns(DBController::MySQL);
 
-    qDebug()<<"sqlite tables rows = "<<db->tableRows()
-        <<" cols = "<<db->tableColumns();
+//    qDebug()<<"sqlite tables rows = "<<db->tableRows()
+//        <<" cols = "<<db->tableColumns();
 
-    qDebug()<<"sqlite have field kk? "<<db->haveField("kk")
-           <<"mysql have field kk? "<<db->haveField("kk",DBController::MySQL);
-    qDebug()<<"sqlite have field type? "<<db->haveField("type")
-           <<"mysql have field channel? "<<db->haveField("channel",DBController::MySQL);
+//    db->haveField("kk");
+//    db->haveField("aa",DBController::MySQL);
+//    db->haveField("type");
+//    db->haveField("channel",DBController::MySQL);
+
+//    db->containField("kk");
+//    db->containField("kk",DBController::MySQL);
+//    db->containField("type");
+//    db->containField("channel",DBController::MySQL);
+
+//    db->fieldName(5);
+//    db->fieldIndex("channel");
+//    db->fieldValue(2,5);
+//    db->fieldValue(3,"name");
 }
 
 MainWindow::~MainWindow()

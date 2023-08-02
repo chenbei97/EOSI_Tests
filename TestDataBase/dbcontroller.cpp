@@ -28,6 +28,22 @@ void DBController::open(const QString &db, const QString &user, const QString &p
      }
 }
 
+bool DBController::query(const QString &q, SQLType type)
+{
+    toggleSql(type);
+    return mQuery.exec(q);
+}
+
+QString DBController::lastError() const
+{
+    return  mQuery.lastError().text();
+}
+
+QSqlRecord DBController::lastRecord() const
+{
+    return mQuery.record();
+}
+
 
 const QSqlDatabase DBController::database(SQLType type) const
 {
@@ -61,16 +77,16 @@ bool DBController::createTable(SQLType type)
 
     // 3, 准备创建表
     if (SQLite == type) {
-        query = QSqlQuery(mSqliteDataBase);
-        query.exec(CreateTableSqlite);
+        mQuery = QSqlQuery(mSqliteDataBase);
+        mQuery.exec(CreateTableSqlite);
     }
     else {
-        query = QSqlQuery(mMysqlDataBase);
-        query.exec(CreateTableMysql);
+        mQuery = QSqlQuery(mMysqlDataBase);
+        mQuery.exec(CreateTableMysql);
     }
 
-    if (!query.isActive()){ // 执行语句失败
-        qDebug()<<"exec failed error is "<<query.lastError().text();
+    if (!mQuery.isActive()){ // 执行语句失败
+        qDebug()<<"exec failed error is "<<mQuery.lastError().text();
     } else qDebug()<<"create table is successful";
 
     return true; // 语句不会执行错误,直接返回true
@@ -79,22 +95,22 @@ bool DBController::createTable(SQLType type)
 bool DBController::haveTable(SQLType type)
 {
     if (SQLite == type) {
-        query = QSqlQuery(mSqliteDataBase);
-        query.exec(QueryTableSqlite);
+        mQuery = QSqlQuery(mSqliteDataBase);
+        mQuery.exec(QueryTableSqlite);
     }
     else {
-        query = QSqlQuery(mMysqlDataBase);
-        query.exec(QueryTableMysql);
+        mQuery = QSqlQuery(mMysqlDataBase);
+        mQuery.exec(QueryTableMysql);
     }
 
-    if (query.isActive()){ // 执行语句成功前提下
-        query.first(); // 这里是有返回值的,要检查是否有记录,要放在isValid前边
-        if (query.isValid() && query.record().count() == 1) {
+    if (mQuery.isActive()){ // 执行语句成功前提下
+        mQuery.first(); // 这里是有返回值的,要检查是否有记录,要放在isValid前边
+        if (mQuery.isValid() && mQuery.record().count() == 1) {
             qDebug()<<"have table"<<ExpermentTableName;
             return true;
         }
     } else { // 是语句格式错误执行失败,不是逻辑错误
-        qDebug()<<"exec failed, error is "<<query.lastError().text();
+        qDebug()<<"exec failed, error is "<<mQuery.lastError().text();
     }
 
     qDebug()<<"dont have table"<<ExpermentTableName;
@@ -120,8 +136,8 @@ bool DBController::addRecord(const QVector<QPair<QString,QString>>&pairs, SQLTyp
     //qDebug()<<"insert keys = "<<keys<<" values = "<<values;
 
     int rows = tableRows(type);
-    query.exec(QString(QString(InsertRecord).arg(keys).arg(values)));
-    if (query.isActive()) {
+    mQuery.exec(QString(QString(InsertRecord).arg(keys).arg(values)));
+    if (mQuery.isActive()) {
         if (tableRows(type) == rows + 1) // 确实新增1行
         {
             qDebug()<<"insert into table successful! cur rows = "<<rows+1;
@@ -155,9 +171,9 @@ bool DBController::addRecord(const QStringList&keys,const QVector<QStringList> &
 int DBController::tableRows(SQLType type)
 {
     toggleSql(type);
-    query.exec(QueryTableRows); // 查询表格行数
-    query.first();
-    auto rows = query.value(0).toInt();
+    mQuery.exec(QueryTableRows); // 查询表格行数
+    mQuery.first();
+    auto rows = mQuery.value(0).toInt();
     return rows;
 }
 
@@ -165,15 +181,15 @@ int DBController::tableColumns(SQLType type)
 {
     int cols = 0;
     if (SQLite == type){
-        query = QSqlQuery(mSqliteDataBase);
-        query.exec(QueryTable); // 查询表格信息
-        cols = query.record().count(); // 暂时只能借助QSqlRecord本身提供的功能
+        mQuery = QSqlQuery(mSqliteDataBase);
+        mQuery.exec(QueryTable); // 查询表格信息
+        cols = mQuery.record().count(); // 暂时只能借助QSqlRecord本身提供的功能
     }
     else {
-        query = QSqlQuery(mMysqlDataBase);
-        query.exec(QueryTableColsMysql); // 可以直接查询表格列数
-        query.first();
-        cols = query.value(0).toInt();
+        mQuery = QSqlQuery(mMysqlDataBase);
+        mQuery.exec(QueryTableColsMysql); // 可以直接查询表格列数
+        mQuery.first();
+        cols = mQuery.value(0).toInt();
     }
 
     return cols;
@@ -182,20 +198,80 @@ int DBController::tableColumns(SQLType type)
 
 bool DBController::haveField(const QString&field,SQLType type)
 {
+     // select 123 from experments;,select 'a' from experments;都会查到但是没有意义
     toggleSql(type);
-    query.exec(QString(QueryTableField).arg(field));
-    //qDebug()<<query.lastQuery();
-    if (query.isActive()) { // 对于select col from table,col不存在都会直接失败
-       query.first();
-       //qDebug()<<query.record();
-       if (query.isValid()) {
+    mQuery.exec(QString(QueryTableField).arg(field));
+
+    if (mQuery.isActive()) { // 对于select col from table,col不存在都会直接失败
+       mQuery.first();
+       //qDebug()<<mQuery.record();
+       if (mQuery.isValid()) {
+           qDebug()<<"field ["<<field<<"] is exist!";
            return true;
        }
     }
+    qDebug()<<"field ["<<field<<"] is not exist!";
     return false;
 }
 
+bool DBController::containField(const QString &field, SQLType type)
+{
+    toggleSql(type);
+    mQuery.exec(QueryTable);
+    auto record = mQuery.record();
+    if (record.contains(field)) {
+         qDebug()<<"field ["<<field<<"] is contains!";
+         return true;
+    }
 
+    qDebug()<<"field ["<<field<<"] is not contains!";
+    return false;
+}
+
+QString DBController::fieldName(int index, SQLType type)
+{
+    toggleSql(type);
+    mQuery.exec(QueryTable);
+    auto record = mQuery.record();
+    auto name = record.fieldName(index);
+    //auto n = record.field(index).name(); // 结果一样
+    qDebug()<<"the "<<index<<" field is "<<name;
+    return name;
+}
+
+int DBController::fieldIndex(const QString &field, SQLType type)
+{
+    toggleSql(type);
+    mQuery.exec(QueryTable);
+    auto record = mQuery.record();
+    auto idx = record.indexOf(field);
+    qDebug()<<"the "<<field<<"'s index  is "<<idx;
+    return idx;
+}
+
+QString DBController::fieldValue(int row, int col, SQLType type)
+{
+    toggleSql(type);
+    mQuery.exec(QueryTableOrderById);
+    mQuery.first();
+    int r = row;
+    while (row-- && mQuery.next()) {};
+    auto var = mQuery.value(col);
+    qDebug()<<"["<<r+1<<","<<col+1<<"] 's value = "<<var.toString();
+    return var.toString();
+}
+
+QString DBController::fieldValue(int row, const QString &field, SQLType type)
+{
+    toggleSql(type);
+    mQuery.exec(QueryTable);
+    mQuery.first();
+    int r = row;
+    while (row-- && mQuery.next()) {};
+    auto var = mQuery.value(field);
+    qDebug()<<"the "<<r+1<<" row, on the field "<<field<<" value = "<<var.toString();
+    return var.toString();
+}
 
 void DBController::updateRecord()
 {
@@ -215,6 +291,6 @@ DBController::DBController(QObject*parent) : QObject(parent)
 void DBController::toggleSql(SQLType type)
 {
     if (SQLite == type)
-        query = QSqlQuery(mSqliteDataBase);
-    else  query = QSqlQuery(mMysqlDataBase);
+        mQuery = QSqlQuery(mSqliteDataBase);
+    else  mQuery = QSqlQuery(mMysqlDataBase);
 }

@@ -14,7 +14,7 @@ static const char * ExpermentTableName = "experments";
 static const char* CreateTableMysql = "create table if not exists experments( "
         "id integer primary key auto_increment not null unique,"
         "type varchar(100) not null default '', "
-        "datetime varchar(100) not null default '', "
+        "datetime datetime not null default '1899/12/30 00:00:00', " // noew(),不支持.zzz
         "name varchar(100) not null default '', "
         "description varchar(100) not null default '', "
         "channel varchar(100) not null default '');";
@@ -22,13 +22,14 @@ static const char* CreateTableMysql = "create table if not exists experments( "
 static const char* CreateTableSqlite= "create table if not exists experments( "
         "id integer primary key autoincrement not null unique,"
         "type varchar(100) not null default '', "
-        "datetime varchar(100) not null default '', "
+        "datetime datetime not null default '1899/12/30 00:00:00', "
         "name varchar(100) not null default '', "
         "description varchar(100) not null default '', "
         "channel varchar(100) not null default '' );";
 
 // 查询表的信息
 static const char* QueryTable = "select * from experments";
+static const char* QueryTableOrderById = "select * from experments order by id";
 
 // 查询表指定字段
 static const char* QueryTableField = "select %1 from experments;";
