@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     DBController * db = &DBController::instance();
     auto sqlite_path = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0)+"/db.db3";
+    qDebug()<<sqlite_path;
     //db->open(sqlite_path);
         db->open(sqlite_path);
         qDebug()<<db->haveTable(ExpermentTableName);

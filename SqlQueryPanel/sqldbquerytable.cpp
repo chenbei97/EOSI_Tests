@@ -15,16 +15,18 @@ SqlDBQueryTable::SqlDBQueryTable(QWidget *parent) : QWidget(parent)
     lay->addWidget(mView);
 
     mSchemaModel = new QStandardItemModel(mView);
-    mSchemaModel->insertColumns(0, 9);
-    mSchemaModel->setHeaderData(0, Qt::Horizontal, "field");
-    mSchemaModel->setHeaderData(1, Qt::Horizontal, "type");
-    mSchemaModel->setHeaderData(2, Qt::Horizontal, "length");
-    mSchemaModel->setHeaderData(3, Qt::Horizontal, "precision");
-    mSchemaModel->setHeaderData(4, Qt::Horizontal, "required");
-    mSchemaModel->setHeaderData(5, Qt::Horizontal, "generated");
-    mSchemaModel->setHeaderData(6, Qt::Horizontal, "typeId");
-    mSchemaModel->setHeaderData(7, Qt::Horizontal, "autoValue");
-    mSchemaModel->setHeaderData(8, Qt::Horizontal, "readOnly");
+    mSchemaModel->insertColumns(0, 10);
+    mSchemaModel->setHeaderData(0, Qt::Horizontal, "name"); // "id"
+    mSchemaModel->setHeaderData(1, Qt::Horizontal, "type"); // QVariant::QDateTime
+    mSchemaModel->setHeaderData(2, Qt::Horizontal, "length"); // 11
+    mSchemaModel->setHeaderData(3, Qt::Horizontal, "precision"); // 0
+    mSchemaModel->setHeaderData(4, Qt::Horizontal, "value"); // ""
+    mSchemaModel->setHeaderData(5, Qt::Horizontal, "defaultValue"); // ""
+    mSchemaModel->setHeaderData(6, Qt::Horizontal, "isRequired"); // 1=requierd,0=optional,-1=unknow
+    mSchemaModel->setHeaderData(7, Qt::Horizontal, "isGenerated"); // true
+    mSchemaModel->setHeaderData(8, Qt::Horizontal, "isAutoValue"); // true
+    mSchemaModel->setHeaderData(9, Qt::Horizontal, "isReadOnly"); // false
+
 }
 
 void SqlDBQueryTable::showTable(const QString&table)
@@ -40,43 +42,42 @@ void SqlDBQueryTable::showTable(const QString&table)
 
 void SqlDBQueryTable::showSchema(const QString&table)
 {
+    mSchemaModel->setHeaderData(0, Qt::Horizontal, "name"); // "id"
+    mSchemaModel->setHeaderData(1, Qt::Horizontal, "type"); // QVariant::QDateTime
+    mSchemaModel->setHeaderData(2, Qt::Horizontal, "length"); // 11
+    mSchemaModel->setHeaderData(3, Qt::Horizontal, "precision"); // 0
+    mSchemaModel->setHeaderData(4, Qt::Horizontal, "value"); // ""
+    mSchemaModel->setHeaderData(5, Qt::Horizontal, "defaultValue"); // ""
+    mSchemaModel->setHeaderData(6, Qt::Horizontal, "isRequired"); // 1=requierd,0=optional,-1=unknow
+    mSchemaModel->setHeaderData(7, Qt::Horizontal, "isGenerated"); // true
+    mSchemaModel->setHeaderData(8, Qt::Horizontal, "isAutoValue"); // true
+    mSchemaModel->setHeaderData(9, Qt::Horizontal, "isReadOnly"); // false
+
     auto record = db.record(table);
+    mSchemaModel->setRowCount(record.count());
 //    qDebug()<<record;
+    for (int i = 0; i < record.count(); ++i) {
+        QSqlField fld = record.field(i);
+//        qDebug()<<"name = "<<fld.name()<<"  value = "<<fld.value().toString()
+//               <<" length = "<<fld.length()<<" precision = "<<fld.precision()
+//              <<" isReadOnly = "<<fld.isReadOnly()<<" isAutoValue = "<<fld.isAutoValue()
+//             <<" isGenerated = "<<fld.isGenerated() <<" defaultvalue = "<<fld.defaultValue().toString()
+//            <<" isRequired = "<<fld.requiredStatus()<<" type = "<<fld.type();
+        mSchemaModel->setData(mSchemaModel->index(i, 0), fld.name());
+//        mSchemaModel->setData(mSchemaModel->index(i, 1), fld.typeID() == -1
+//                ? QString(QMetaType::typeName(fld.type()))
+//                : QString("%1 (%2)").arg(QMetaType::typeName(fld.type())).arg(fld.typeID())); // typeName=>QString, typeID=>253
+        mSchemaModel->setData(mSchemaModel->index(i, 1),QMetaType::typeName(fld.type()));
+        mSchemaModel->setData(mSchemaModel->index(i, 2), fld.length());
+        mSchemaModel->setData(mSchemaModel->index(i, 3), fld.precision());
+        mSchemaModel->setData(mSchemaModel->index(i, 4), fld.value().toString());
+        mSchemaModel->setData(mSchemaModel->index(i, 5), fld.defaultValue());
+        mSchemaModel->setData(mSchemaModel->index(i, 6), fld.requiredStatus() == -1 ? QVariant("?"): QVariant(bool(fld.requiredStatus())));
+        mSchemaModel->setData(mSchemaModel->index(i, 7), fld.isGenerated());
+        mSchemaModel->setData(mSchemaModel->index(i, 8), fld.isAutoValue());
+        mSchemaModel->setData(mSchemaModel->index(i, 9), fld.isReadOnly());
+
+    }
     mView->setModel(mSchemaModel);
 }
 
-//QSharedPointer<QStandardItemModel> SqlDBQueryTable::createTmpModel(const QSqlRecord&rec) const
-//{
-
-//    auto model = new QStandardItemModel(mView);
-//    model->insertRows(0, rec.count());
-//    model->insertColumns(0, 9);
-
-////    model->setHeaderData(0, Qt::Horizontal, "field");
-////    model->setHeaderData(1, Qt::Horizontal, "type");
-////    model->setHeaderData(2, Qt::Horizontal, "length");
-////    model->setHeaderData(3, Qt::Horizontal, "precision");
-////    model->setHeaderData(4, Qt::Horizontal, "required");
-////    model->setHeaderData(5, Qt::Horizontal, "generated");
-////    model->setHeaderData(6, Qt::Horizontal, "typeId");
-////    model->setHeaderData(7, Qt::Horizontal, "autoValue");
-////    model->setHeaderData(8, Qt::Horizontal, "readOnly");
-
-////    for (int i = 0; i < rec.count(); ++i) {
-////        QSqlField fld = rec.field(i);
-////        model->setData(model->index(i, 0), fld.name());
-////        model->setData(model->index(i, 1), fld.typeID() == -1
-////                ? QString(QMetaType::typeName(fld.type()))
-////                : QString("%1 (%2)").arg(QMetaType::typeName(fld.type())).arg(fld.typeID()));
-////        model->setData(model->index(i, 2), fld.length());
-////        model->setData(model->index(i, 3), fld.precision());
-////        model->setData(model->index(i, 4), fld.requiredStatus() == -1 ? QVariant("?")
-////                : QVariant(bool(fld.requiredStatus())));
-////        model->setData(model->index(i, 5), fld.isAutoValue());
-////        model->setData(model->index(i, 6), fld.defaultValue());
-////    }
-
-
-//    QSharedPointer<QStandardItemModel> ptr = QSharedPointer<QStandardItemModel>(model);
-//    return ptr;
-//}

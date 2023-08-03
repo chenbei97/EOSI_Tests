@@ -24,7 +24,7 @@ public slots:
     void showTable(const QString&table);
     void showSchema(const QString&table);
 private:
-    //QSharedPointer<QStandardItemModel> createTmpModel(const QSqlRecord&rec) const;
+
 private:
     QSqlTableModel * mModel;
     QStandardItemModel * mSchemaModel;
