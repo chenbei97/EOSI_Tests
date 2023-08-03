@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
     auto it2 = new QTreeWidgetItem(QStringList()<<"vv"<<"bb"<<"cc");
     auto it3 = new QTreeWidgetItem(QStringList()<<"aaa"<<"bbb");
     it3->addChild(new QTreeWidgetItem(QStringList()<<"jhdfjsdhf"));
+    auto it4 = new QTreeWidgetItem(it3);
+    it4->setText(0,"chen");
     it2->addChild(it3);
     it2->addChild(new QTreeWidgetItem(QStringList()<<"324232"));
     w->addTopLevelItem(it2);

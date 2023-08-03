@@ -73,7 +73,7 @@ bool DBController::createTable(SQLType type)
     if (!isOpen(type)) return false;
 
     // 2. 是否已存在该表
-    if (haveTable(type)) return true;
+    if (haveTable(ExpermentTableName,type)) return true;
 
     // 3, 准备创建表
     if (SQLite == type) {
@@ -92,15 +92,27 @@ bool DBController::createTable(SQLType type)
     return true; // 语句不会执行错误,直接返回true
 }
 
-bool DBController::haveTable(SQLType type)
+bool DBController::containTable(const QString& table,SQLType type)
+{
+    QStringList tables;
+    if (type == SQLite) {
+        tables = mSqliteDataBase.tables();
+    } else {
+        tables = mMysqlDataBase.tables();
+    }
+    return tables.contains(table);
+}
+
+
+bool DBController::haveTable(const QString& table,SQLType type)
 {
     if (SQLite == type) {
         mQuery = QSqlQuery(mSqliteDataBase);
-        mQuery.exec(QueryTableSqlite);
+        mQuery.exec(QString(QueryTableSqlite).arg(table));
     }
     else {
         mQuery = QSqlQuery(mMysqlDataBase);
-        mQuery.exec(QueryTableMysql);
+        mQuery.exec(QString(QueryTableMysql).arg(table));
     }
 
     if (mQuery.isActive()){ // 执行语句成功前提下
@@ -116,6 +128,7 @@ bool DBController::haveTable(SQLType type)
     qDebug()<<"dont have table"<<ExpermentTableName;
     return false;
 }
+
 
 bool DBController::addRecord(const QVector<QPair<QString,QString>>&pairs, SQLType type)
 {

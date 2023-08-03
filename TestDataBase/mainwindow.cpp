@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     auto sqlite_path = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0)+"/db.db3";
     //db->open(sqlite_path);
         db->open(sqlite_path);
+        qDebug()<<db->haveTable(ExpermentTableName);
         db->createTable();
 
     db->open("dbcontroller","root","199791","127.0.0.1",3306,DBController::MySQL);

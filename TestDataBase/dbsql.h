@@ -35,8 +35,8 @@ static const char* QueryTableOrderById = "select * from experments order by id";
 static const char* QueryTableField = "select %1 from experments;";
 
 // 查询指定表
-static const char* QueryTableMysql = "show tables like 'experments' ";
-static const char* QueryTableSqlite = "select name from sqlite_master where name = 'experments' ";
+static const char* QueryTableMysql = "show tables like '%1' ";
+static const char* QueryTableSqlite = "select name from sqlite_master where name = '%1' ";
 
 // 查询表格行数
 static const char* QueryTableRows = "select count(*) from experments";

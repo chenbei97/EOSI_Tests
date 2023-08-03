@@ -35,7 +35,8 @@ public:
     bool isOpen(SQLType type = SQLite) const;
 
     bool createTable(SQLType type = SQLite);
-    bool haveTable(SQLType type = SQLite);
+    bool haveTable(const QString& table,SQLType type = SQLite);
+    bool containTable(const QString& table, SQLType type = SQLite);
 
     int tableRows(SQLType type = SQLite) ;
     int tableColumns(SQLType type = SQLite) ;
