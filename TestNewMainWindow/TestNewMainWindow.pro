@@ -1,10 +1,9 @@
 QT       += core gui sql
-CONFIG   += utf8_source
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
-
+CONFIG   += utf8_source
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -19,15 +18,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    sqldbquerytree.cpp \
-    sqldbquerytable.cpp \
     sqldbquerypanel.cpp \
+    sqldbquerytable.cpp \
+    sqldbquerytree.cpp \
+    sqlqueryconsole.cpp
 
 HEADERS += \
     mainwindow.h \
-    sqldbquerytree.h \
-    sqldbquerytable.h \
     sqldbquerypanel.h \
+    sqldbquerytable.h \
+    sqldbquerytree.h \
+    sqlqueryconsole.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

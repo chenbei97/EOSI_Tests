@@ -1,20 +1,7 @@
-﻿#include "mainwindow.h"
-#include "sqldbquerytree.h"
-#include "sqldbquerytable.h"
-#include "sqldbquerypanel.h"
-#include <QSplitter>
+﻿#include "sqlqueryconsole.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QWidget(parent)
+SqlQueryConsole::SqlQueryConsole(QWidget *parent) : QWidget(parent)
 {
-    auto db = QSqlDatabase::addDatabase("QMYSQL","mysql");
-    db.setPort(3306);
-    db.setUserName("root");
-    db.setHostName("127.0.0.1");
-    db.setPassword("199791");
-    db.setDatabaseName("dbcontroller");
-    db.open();
-
     auto tree = new SqlDBQueryTree; // 不要指定this 否则会出问题
     auto table = new SqlDBQueryTable;
     auto panel = new SqlDBQueryPanel;
@@ -27,24 +14,21 @@ MainWindow::MainWindow(QWidget *parent)
     connect(panel,&SqlDBQueryPanel::queryCommand,table,&SqlDBQueryTable::execQuery);
     connect(panel,&SqlDBQueryPanel::filterField,table,&SqlDBQueryTable::filterTableByField);
     connect(panel,&SqlDBQueryPanel::dateChanged,table,&SqlDBQueryTable::filterTableByTime);
-    //QSplitter * s = new QSplitter(Qt::Horizontal);
     QHBoxLayout * s = new QHBoxLayout;
     s->addWidget(tree);
     s->addWidget(table);
 
-//    QSplitter * ss = new QSplitter(Qt::Vertical);
-////    ss->setStretchFactor(0,10);
-////    ss->setStretchFactor(1,1);
-//    ss->addWidget(s);
-//    ss->addWidget(panel);
-
     QVBoxLayout * lay = new QVBoxLayout(this);
     lay->addLayout(s);
     lay->addWidget(panel);
-    resize(1500,1000);
+
+    auto act = new QAction(tr("启动分析"));
+    connect(act,&QAction::triggered,this,&SqlQueryConsole::launchAnalysisDlg);
+    addAction(act);
+    setContextMenuPolicy(Qt::ActionsContextMenu);
 }
 
-MainWindow::~MainWindow()
+void SqlQueryConsole::launchAnalysisDlg()
 {
-}
 
+}
