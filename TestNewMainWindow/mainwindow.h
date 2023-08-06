@@ -7,7 +7,10 @@
 #include <qdebug.h>
 #include <qmenubar.h>
 #include <qtabwidget.h>
+#include "scanplanconfig.h"
 #include "sqlqueryconsole.h"
+#include "scanvesselconfig.h"
+#include "gradienthiddenwidget.h"
 
 
 class MainWindow : public QMainWindow
@@ -15,14 +18,18 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    typedef  ScanPlanConfig::ScanPlan ScanPlan;
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
 private slots:
-    void createNewExperments();
-    void queryHistoryExperments();
-    void viewCurrentExperments();
+    void onScanPlanChanged(ScanPlan fre);
 private:
     QTabWidget * mTab;
+    ScanPlanConfig * mScanFreConfig;
+    //ScanVesselConfig *  mVesselConfig;
     SqlQueryConsole * mQueryPanel;
+    GradientHiddenWidget * www;
+
+private:
+    ScanPlan mScanPlan;
 };
 #endif // MAINWINDOW_H

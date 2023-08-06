@@ -15,10 +15,6 @@ MainWindow::MainWindow(QWidget *parent)
     QMenu * menu2 = new QMenu(tr("分析"));
     QMenu * menu3 = new QMenu(tr("帮助"));
     QMenu * menu4 = new QMenu(tr("其它"));
-
-//    auto act1 = menu1->addAction(tr("创建实验"));
-//    auto act2 = menu2->addAction(tr("查询实验"));
-//    auto act3 = menu3->addAction(tr("当前实验"));
     auto act41 = menu4->addAction(tr("版本"));
     auto act42 = menu4->addAction(tr("语言"));
     auto act43 = menu4->addAction(tr("退出"));
@@ -30,38 +26,33 @@ MainWindow::MainWindow(QWidget *parent)
     menubar->addMenu(menu4);
     setMenuBar(menubar);
 
-//    connect(act1,&QAction::triggered,this,&MainWindow::createNewExperments);
-//    connect(act2,&QAction::triggered,this,&MainWindow::queryHistoryExperments);
-//    connect(act3,&QAction::triggered,this,&MainWindow::viewCurrentExperments);
     connect(act43,&QAction::triggered,this,&MainWindow::close);
 
     mTab = new QTabWidget(this);
+    mScanFreConfig = new ScanPlanConfig(this);
     mQueryPanel = new SqlQueryConsole(this);
+    //mVesselConfig = new ScanVesselConfig; // 不要this
 
-    mTab->addTab(new QWidget,tr("创建实验"));
+    www = new GradientHiddenWidget;
+    mTab->addTab(mScanFreConfig,tr("创建实验"));
     mTab->addTab(mQueryPanel,tr("查询实验"));
-    mTab->addTab(new QWidget,tr("当前实验"));
+    mTab->addTab(www,tr("当前实验"));
 
     setCentralWidget(mTab);
+    setFont(QFont("Times New Roman",12));
     resize(1000,800);
+
+    connect(mScanFreConfig,&ScanPlanConfig::scanPlanChanged,this,&MainWindow::onScanPlanChanged);
 }
 
-void MainWindow::createNewExperments()
+void MainWindow::onScanPlanChanged(ScanPlan fre)
 {
-
+    mScanPlan = fre;
+    auto config = new ScanVesselConfig;
+    config->setAttribute(Qt::WA_DeleteOnClose);
+    if (fre == ScanPlan::Once)
+        config->show();
+    else config->show();
 }
 
-void MainWindow::queryHistoryExperments()
-{
-
-}
-
-void MainWindow::viewCurrentExperments()
-{
-
-}
-
-MainWindow::~MainWindow()
-{
-}
 

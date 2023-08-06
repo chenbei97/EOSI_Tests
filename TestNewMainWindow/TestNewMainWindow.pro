@@ -16,19 +16,45 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    gradienthiddenanimation.cpp \
+    gradienthiddenwidget.cpp \
     main.cpp \
     mainwindow.cpp \
+    pattern.cpp \
+    scanconfigdata.cpp \
+    scancreateconfig.cpp \
+    scanpatternconfig.cpp \
+    scanpatternpreview.cpp \
+    scanplanconfig.cpp \
+    scansettingconfig.cpp \
+    scantimeconfig.cpp \
+    scantypeconfig.cpp \
+    scanvesselconfig.cpp \
     sqldbquerypanel.cpp \
     sqldbquerytable.cpp \
     sqldbquerytree.cpp \
-    sqlqueryconsole.cpp
+    sqlqueryconsole.cpp\
+    scandescriptionconfig.cpp
 
 HEADERS += \
+    gradienthiddenanimation.h \
+    gradienthiddenwidget.h \
     mainwindow.h \
+    pattern.h \
+    scanconfigdata.h \
+    scancreateconfig.h \
+    scanpatternconfig.h \
+    scanpatternpreview.h \
+    scanplanconfig.h \
+    scansettingconfig.h \
+    scantimeconfig.h \
+    scantypeconfig.h \
+    scanvesselconfig.h \
     sqldbquerypanel.h \
     sqldbquerytable.h \
     sqldbquerytree.h \
-    sqlqueryconsole.h
+    sqlqueryconsole.h\
+    scandescriptionconfig.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
