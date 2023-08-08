@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    button.cpp \
     gradienthiddenanimation.cpp \
     gradienthiddenwidget.cpp \
     main.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
     pattern.cpp \
     scanconfigdata.cpp \
     scancreateconfig.cpp \
+    scanexperimentconfig.cpp \
     scanpatternconfig.cpp \
     scanpatternpreview.cpp \
     scanplanconfig.cpp \
@@ -30,6 +32,7 @@ SOURCES += \
     scantimeconfig.cpp \
     scantypeconfig.cpp \
     scanvesselconfig.cpp \
+    scanvesselsummary.cpp \
     sqldbquerypanel.cpp \
     sqldbquerytable.cpp \
     sqldbquerytree.cpp \
@@ -37,12 +40,17 @@ SOURCES += \
     scandescriptionconfig.cpp
 
 HEADERS += \
+    Constant.h \
+    Style.h \
+    button.h \
+    core.h \
     gradienthiddenanimation.h \
     gradienthiddenwidget.h \
     mainwindow.h \
     pattern.h \
     scanconfigdata.h \
     scancreateconfig.h \
+    scanexperimentconfig.h \
     scanpatternconfig.h \
     scanpatternpreview.h \
     scanplanconfig.h \
@@ -50,6 +58,7 @@ HEADERS += \
     scantimeconfig.h \
     scantypeconfig.h \
     scanvesselconfig.h \
+    scanvesselsummary.h \
     sqldbquerypanel.h \
     sqldbquerytable.h \
     sqldbquerytree.h \

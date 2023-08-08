@@ -150,8 +150,8 @@ bool ScanTimeConfig::checkScheduledTime()
        auto hours = mEndTime->value() - mStartTime->value()
                + 24*(mEndDate->date().dayOfYear()-mStartDate->date().dayOfYear());
        // 如果起始时间是今天,还不能早于当前时间
-       qDebug()<<"endDate = "<<mEndDate->date()<<" startDate = "<<mStartDate->date()
-              <<" order1 = "<<mEndDate->date().daysInYear()<<"  order2 = "<<mStartDate->date().daysInYear();
+//       qDebug()<<"endDate = "<<mEndDate->date()<<" startDate = "<<mStartDate->date()
+//              <<" order1 = "<<mEndDate->date().daysInYear()<<"  order2 = "<<mStartDate->date().daysInYear();
        bool r = true;
        if (mStartDate->date() == QDate::currentDate() )
        {

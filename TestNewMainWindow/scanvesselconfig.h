@@ -5,8 +5,9 @@
 #include <QMap>
 #include <QStackedWidget>
 #include <QResizeEvent>
-#include <QMessageBox>
 #include "scanconfigdata.h"
+#include "scanvesselsummary.h"
+#include "scanexperimentconfig.h"
 
 class ScanVesselConfig : public QWidget
 {
@@ -49,6 +50,8 @@ private:
     ScanPatternPreview * mPatternPreview;
     ScanDescriptionConfig * mDescConfig;
     ScanTimeConfig * mTimeConfig;
+    ScanVesselSummary * mSummary;
+    ScanExperimentConfig * mExperConfig;
 private:
     ScanConfigData data;
 signals:

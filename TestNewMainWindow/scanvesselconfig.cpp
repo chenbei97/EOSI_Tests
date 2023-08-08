@@ -32,7 +32,8 @@ void ScanVesselConfig::addStackedWidgets()
     mPatternPreview = new ScanPatternPreview;
     mDescConfig = new ScanDescriptionConfig;
     mTimeConfig = new ScanTimeConfig;
-
+    mSummary = new ScanVesselSummary;
+    mExperConfig = new ScanExperimentConfig;
 
     mStack->addWidget(mCreateConfig);
     mStack->addWidget(mTypeConfig);
@@ -41,6 +42,8 @@ void ScanVesselConfig::addStackedWidgets()
     mStack->addWidget(mPatternPreview);
     mStack->addWidget(mDescConfig);
     mStack->addWidget(mTimeConfig);
+    mStack->addWidget(mSummary);
+    mStack->addWidget(mExperConfig);
 
     connect(mCreateConfig,&ScanCreateConfig::createMode,this,&ScanVesselConfig::setCreateMode);
     connect(mTypeConfig,&ScanTypeConfig::scanType,this,&ScanVesselConfig::setScanType);
@@ -64,7 +67,7 @@ QHBoxLayout* ScanVesselConfig::setButton()
 void ScanVesselConfig::setProgressBar()
 {
     mProgressBar = new QProgressBar;
-    mProgressBar->setRange(0,10);
+    mProgressBar->setRange(0,9);
     mProgressBar->setAlignment(Qt::AlignCenter);
 
     mProgressBar->setFormat("%v/%m");
@@ -134,6 +137,7 @@ void ScanVesselConfig::onNext()
            mPatternPreview->setSortPoints(mPatternConfig->sortSelectedPoints());
            mPatternPreview->setSortNames(names);
            data.points = mPatternConfig->sortSelectedPoints(); // 把位置信息保存
+           data.names = names;
     }
 
     if (data.progress == 6) { // 实验的各类信息更新
@@ -149,7 +153,7 @@ void ScanVesselConfig::onNext()
         data.experiment_description = mDescConfig->description();
     }
 
-    if (data.progress == 7) {
+    if (data.progress == 7) { // 实验时间设置
         data.scan_is_once = mTimeConfig->isOnce();
 
         if (!mTimeConfig->isOnce()) {
@@ -159,19 +163,27 @@ void ScanVesselConfig::onNext()
             data.scan_end_datetime = mTimeConfig->endScheduledTime();
             data.scan_start_datetime = mTimeConfig->startScheduledTime();
             data.scan_duration_time = mTimeConfig->durationScheduledTime();
-            qDebug()<<"is schedule => start = "<<data.scan_start_datetime<<" end = "<<data.scan_end_datetime
-                   << " total = "<<data.scan_total_time<<" duration = "<<data.scan_duration_time<<" count = "<<data.scan_total_count;
+//            qDebug()<<"is schedule => start = "<<data.scan_start_datetime<<" end = "<<data.scan_end_datetime
+//                   << " total = "<<data.scan_total_time<<" duration = "<<data.scan_duration_time<<" count = "<<data.scan_total_count;
         } else {
             if (!mTimeConfig->checkOnceTime()) return;
             data.scan_once_total_time = mTimeConfig->totalOnceTime();
             data.scan_once_duration_time = mTimeConfig->durationOnceTime();
             data.scan_once_total_count = mTimeConfig->totcalOnceCount();
-            qDebug()<<"is once => total = "<<data.scan_once_total_time<<" duration = "<<data.scan_once_duration_time
-                   <<" count = "<<data.scan_once_total_count;
+//            qDebug()<<"is once => total = "<<data.scan_once_total_time<<" duration = "<<data.scan_once_duration_time
+//                   <<" count = "<<data.scan_once_total_count;
         }
-        qDebug()<<"isOnce = "<<mTimeConfig->isOnce();
+        //qDebug()<<"isOnce = "<<mTimeConfig->isOnce();
+        mSummary->translate(data);
+    }
 
+    if (data.progress == 8) { // 面板信息总览
+        if (!mSummary->saveConfig()) return;
+    }
 
+    if (data.progress == 9) {
+        if (!mExperConfig->checkExperimentType())
+            return;
     }
 
     data.progress++;

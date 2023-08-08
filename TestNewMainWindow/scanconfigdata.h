@@ -30,8 +30,9 @@ public:
     ViewOption view = ViewOption::EmptyView;
     ObjectiveOption objective = ObjectiveOption::EmptyObjective;
     QVector<QPoint> points;
+    QStringList names;
 
-    QString experiment_date;
+    QDate experiment_date;
     QString experiment_name;
     QString experiment_person;
     QString experiment_celltype;
@@ -48,6 +49,7 @@ public:
     int scan_once_total_time = 0;
     int scan_once_duration_time = 0;
     int scan_once_total_count = 0;
+
 signals:
 
 };

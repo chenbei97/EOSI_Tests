@@ -51,9 +51,9 @@ void ScanDescriptionConfig::onAddGroup()
     mWorkGroup->addItem(text);
 }
 
-QString ScanDescriptionConfig::experDate() const
+QDate ScanDescriptionConfig::experDate() const
 {
-    return QDate::currentDate().toString("yyyy/MM/dd");
+    return QDate::currentDate();
 }
 
 QString ScanDescriptionConfig::experName()

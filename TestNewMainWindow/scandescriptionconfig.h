@@ -16,7 +16,7 @@ class ScanDescriptionConfig : public GradientHiddenWidget
     Q_OBJECT
 public:
     explicit ScanDescriptionConfig(QWidget *parent = nullptr);
-    QString experDate() const;
+    QDate experDate() const;
     QString experName();
     QString personName();
     QString cellType() const;
