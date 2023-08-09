@@ -4,6 +4,60 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+        auto data = Data();
+        auto obj = data.object();
+        JsonReadWrite m;
+        //auto bytes = m.readJson("eosi_config_object.json");
+        m.writeJson("eosi_config.json",obj);
+
+        //test_read();
+//    QFile jsonFile("D:\\1.json");
+//            if (!jsonFile.open(QIODevice::ReadWrite | QIODevice::Text))
+//                qDebug() << "1111";
+
+//            QTextStream sss(&jsonFile);
+//            sss.setCodec("utf-8");
+//            QJsonDocument json_doc;//创建json文件
+//            QString str = "你好";
+//            QJsonObject json_obj;//创建json对象
+//            json_obj.insert("name2",str);
+//            json_obj.insert("age2",14);
+//            json_obj.insert("age3",QString("哈哈哈哈"));
+//            json_doc.setObject(json_obj);//将json对象转为json文件
+//            jsonFile.write(json_doc.toJson(QJsonDocument::Indented));//写入文件
+//            //sss<<json_doc.toJson(QJsonDocument::Indented);
+//            jsonFile.close();
+}
+
+MainWindow::~MainWindow()
+{
+}
+
+void MainWindow::test_read()
+{
+    JsonReadWrite m;
+    auto str1 = m.readJson("eosi_config_object.json");
+    auto str2 = m.readJson("eosi_config_array.json");
+    m.parseJson(str1);
+    //m.parseJson(str2);
+
+    auto mao = m.map();
+    auto iter = mao.begin();
+    qDebug()<<"count = "<<mao.count();
+    for(; iter != mao.end(); ++iter){
+        if (iter.key() == "points") {
+            auto points = iter.value().value<QVector<QPair<QPoint,QString> >>();
+            qDebug()<<"["<<iter.key()<<","<<points<<"]";
+        }
+        else qDebug()<<"["<<iter.key()<<","<<iter.value()<<"]";
+    }
+
+    foreach(auto l, m.list())
+        qDebug()<<l;
+}
+
+void MainWindow::test()
+{
     // obj
     QJsonObject obj1;
     obj1.insert("a",QJsonValue(3.14));
@@ -135,11 +189,4 @@ MainWindow::MainWindow(QWidget *parent)
                 qDebug()<<list2.last().toObject().value("abc");
         }
     }
-
-
 }
-
-MainWindow::~MainWindow()
-{
-}
-

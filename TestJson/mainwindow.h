@@ -8,6 +8,8 @@
 #include "qjsondocument.h"
 #include "qdir.h"
 #include "qdebug.h"
+#include "jsonreadwrite.h"
+#include "data.h"
 
 class MainWindow : public QMainWindow
 {
@@ -15,6 +17,8 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+    void test();
+    void test_read();
     ~MainWindow();
 };
 #endif // MAINWINDOW_H
