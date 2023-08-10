@@ -7,10 +7,12 @@ MainWindow::MainWindow(QWidget *parent)
         auto data = Data();
         auto obj = data.object();
         JsonReadWrite m;
-        //auto bytes = m.readJson("eosi_config_object.json");
-        m.writeJson("eosi_config.json",obj);
+        auto bytes = m.readJson("eosi_config_object.json");
 
-        //test_read();
+        m.writeJson("eosi_config.json",obj);
+        //qDebug()<<QString::fromUtf8(bytes);
+
+        test_read();
 //    QFile jsonFile("D:\\1.json");
 //            if (!jsonFile.open(QIODevice::ReadWrite | QIODevice::Text))
 //                qDebug() << "1111";

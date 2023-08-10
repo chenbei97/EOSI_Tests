@@ -79,8 +79,8 @@ QByteArray JsonReadWrite::readJson(const QString&filename)
     {
         QTextStream stream(&file);
         stream.setCodec("utf-8");
-        //stream<<json;
-        file.write(json);
+        //json = stream.readAll().toUtf8();
+        json = file.readAll();
         file.close();
     }
     return json;
