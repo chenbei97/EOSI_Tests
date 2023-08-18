@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mysqlreadwrite.cpp \
+        sqlitereadwrite.cpp \
         sqlreadwrite.cpp
 
 # Default rules for deployment.
@@ -27,5 +28,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     mysqlreadwrite.h \
+    sqlitereadwrite.h \
     sqlreadwrite.h \
     sqlstatements.h

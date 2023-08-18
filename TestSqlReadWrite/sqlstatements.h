@@ -8,7 +8,14 @@
     <<QTime::currentTime().toString("h:mm:ss:zzz")<<__FUNCTION__<<"] sql exec failed! error is ")
 typedef  const QString& QCString;
 typedef  QStringList QFieldsList;
+typedef  QStringList QValuesList;
+typedef QVector<QString> QValuelist;
+typedef QVector<QVector<QString>> QValuemap;
+typedef QVector<bool> QBoollist;
 typedef  const QFieldsList& QCFieldsList;
+typedef  const QValuesList& QCValuesList;
+typedef  const QValuelist& QCValuelist;
+typedef  const QValuemap& QCValuemap;
 
 #include "qsqlindex.h"
 #include "qsqlrecord.h"
@@ -35,17 +42,23 @@ static QFieldsList ExperGeneralConfigFields = {
 
 // （2）通用命令
 static const char* SelectXFromTable = "select * from %1 ";
+static const char* SelectXFromTableWhere = "select * from %1 where %2 ";
 static const char* SelectTableRows = "select count(*) from %1 "; // 查询行数
 static const char* SelectXFromTableOrderById = "select * from %1 order by id"; // id保证都i有
 static const char* SelectFieldFromTable = "select %1 from %2";
 static const char* DropTable = "drop table %1";
-static const char* CreateEmptyTable = "create table if not exists %1( "
+static const char* CreateEmptyTableMySql = "create table if not exists %1( "
         "id integer primary key auto_increment not null unique, "
+        "datetime datetime not null default '1899/12/30 00:00:00' );"; // 空表
+static const char* CreateEmptyTableSqlite = "create table if not exists %1( "
+        "id integer primary key autoincrement not null unique, "
         "datetime datetime not null default '1899/12/30 00:00:00' );"; // 空表
 //insert into experconfig (channel,view,wellsize)
 //values ('phase','2','96'),('red','4','24'),('green','8','384')
 // 通用型,%3可以是多个()括起来的值,%2可以是ExperGeneralConfigFields每个表的每个字段逗号隔开
 static const char* InsertRecord = "insert into %1 (%2) values %3";
+static const char* RemoveRecord = "delete from %1 where %2";
+static const char* UpdateRecord = "update %1 set %2 where %3";
 
 // （3）数据库特有命令
 // （3.1）查询指定表是否存在
@@ -91,8 +104,9 @@ static const char* SelectDataSourceExistedFromInformationSchema=
 static const char*  CreateDataSource = "create database if not exists %1 character set 'utf8mb4'";// 仅限于mysql
 // （3.5）删除数据源
 static const char*  DropDataSource = "drop database %1";// 仅限于mysql
-
-
+// （3.6）列出数据源
+static const char* CurrentDataSourceMysql = "select database() ";
+static const char* CurrentDataSourceSqlite = "PRAGMA database_list";
 
 
 #endif // SQLSTATEMENTS_H

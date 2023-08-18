@@ -99,27 +99,6 @@ bool MySqlReadWrite::dropDataSource(QCString source)
     return false;
 }
 
-bool MySqlReadWrite::haveTable(QCString table)
-{
-    auto statements = QString(ShowTablesLike).arg(table);
-    mQuery.exec(statements);
-    if (mQuery.isActive()){ // 执行语句成功前提下
-        mQuery.first();
-        auto rec = lastRecord();
-        if (mQuery.isValid() && rec.count() == 1) { // 查询有效时只会有1条记录
-            auto t = rec.value(0).toString(); // 会返回这个表名称
-            if (t == table) {
-                LOG<<"table"<<t<<" is exist!";
-                return true;
-            }
-        }
-    } else { // 语句没执行成功
-        SqlExecFailedLOG<<lastError();
-    }
-    LOG<<"table"<<table<<" is not exist!";
-    return false;
-}
-
 int MySqlReadWrite::tableColumns(QCString table)
 { // 对于mysql可以用自己的方法查询
     auto statements = QString(SelectTableColumnsFromInformationSchema).arg(table);

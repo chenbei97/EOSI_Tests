@@ -13,17 +13,20 @@ protected:
 public:
     explicit SqlReadWrite(QObject *parent = nullptr);
 
+    void setType(SQLType type);
     SQLType type() const;
     void close();
 
     const QSqlDatabase database() const;
+    QString currentDataSource();
     bool isValid() const;
     bool isOpen() const;
 
     bool createTable(QCString statement);
+    bool createTable(QCString table,QCString statement,QCString init);
     bool createEmptyTable(QCString table);
     bool dropTable(QCString table);
-    virtual bool haveTable(QCString table);
+    bool haveTable(QCString table);
     bool containTable(QCString table);
 
     int tableRows(QCString table);
@@ -44,8 +47,23 @@ public:
     QString lastError() const;
     QSqlRecord lastRecord() const;
 
-    bool addRecord(QCString table,QCFieldsList fieldList, QCFieldsList values);
+    bool addRecord(QCString table,QCFieldsList fieldList, QCValuesList values); // 多值
+    QBoollist addRecord(QCString table,QCFieldsList fieldList, QCValuemap map); // 多值
+    bool addRecord(QCString table,QCFieldsList fieldList, QCString value);//单组值
+    bool addRecord(QCString table,QCFieldsList fieldList, QCValuelist values); // 单组值
 
+    bool haveRecord(QCString table,QCString condition);
+    bool haveRecord(QCString table,int row);
+
+    bool removeRecord(QCString table, QCString condition);
+    bool removeRecord(QCString table, int row);
+
+    bool updateRecord(QCString table,QCString dict, QCString condition);
+    bool updateRecord(QCString table,QCString dict, int row);
+    bool updateRecord(QCString table,QCString key, QCString value,QCString condition);
+    bool updateRecord(QCString table,QCString key, QCString value,int row);
+    bool updateRecord(QCString table,QFieldsList keys, QValuesList values,QCString condition);
+    bool updateRecord(QCString table,QFieldsList keys, QValuesList values,int row);
 signals:
 
 };

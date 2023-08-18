@@ -27,7 +27,6 @@ public:
     bool createDataSource(QCString source);
     bool dropDataSource(QCString source);
 
-    bool haveTable(QCString table) override;
     int tableColumns(QCString table) override;
 private:
     explicit MySqlReadWrite(QObject*parent = nullptr);

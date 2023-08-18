@@ -4,6 +4,11 @@ SqlReadWrite::SqlReadWrite(QObject *parent) : QObject(parent)
 {
 }
 
+void SqlReadWrite::setType(SQLType type)
+{ // 如果不使用子类,需要设置类型,这样可以使用haveTable,createEmptyTable等函数
+    mType = type;
+}
+
 SQLType SqlReadWrite::type() const
 {
     return mType;
@@ -44,7 +49,29 @@ bool SqlReadWrite::dropTable(QCString table)
 
 bool SqlReadWrite::haveTable(QCString table)
 {
-    Q_UNUSED(table);
+    QString statement;
+    if (mType==SQLType::Sqlite)
+        statement = QString(SelectTableExistedFromSqliteMaster).arg(table);
+    else if (mType == SQLType::Mysql)
+        statement = QString(ShowTablesLike).arg(table);
+    else return false;
+
+    mQuery.exec(statement);
+    if (mQuery.isActive()){ // 执行语句成功前提下
+        mQuery.first();
+        auto rec = lastRecord();
+        if (mQuery.isValid() && rec.count() == 1) { // 查询有效时只会有1条记录
+            auto t = rec.value(0).toString(); // 会返回这个表名称
+            if (t == table) {
+                LOG<<"table"<<t<<" is exist!";
+                return true;
+            }
+        }
+    } else { // 语句没执行成功
+        SqlExecFailedLOG<<lastError();
+    }
+    LOG<<"table"<<table<<" is not exist!";
+    return false;
     return false;
 }
 
@@ -59,10 +86,21 @@ bool SqlReadWrite::createTable(QCString statement)
     return true;
 }
 
+bool SqlReadWrite::createTable(QCString table,QCString create,QCString init)
+{ // 表名，创建表的语句，表的初始化语句
+    auto statement = QString(create).arg(table).arg(init);
+    return createTable(statement);
+}
+
 bool  SqlReadWrite::createEmptyTable(QCString table)
 {
     //空表至少有id和datetime
-    auto statement = QString(CreateEmptyTable).arg(table);
+    QString statement;
+    if (mType == SQLType::Mysql)
+        statement = QString(CreateEmptyTableMySql).arg(table);
+    else if (mType == SQLType::Sqlite)
+        statement = QString(CreateEmptyTableSqlite).arg(table);
+    else return false;
 
     mQuery.exec(statement);
     if (!mQuery.isActive()) {
@@ -81,6 +119,31 @@ bool SqlReadWrite::containTable(QCString table)
 const QSqlDatabase SqlReadWrite::database() const
 {
     return mDB;
+}
+
+QString SqlReadWrite::currentDataSource()
+{
+    QString statement;
+    if (mType == SQLType::Mysql)
+        statement = CurrentDataSourceMysql;
+    else if ( mType == SQLType::Sqlite)
+        statement = CurrentDataSourceSqlite;
+    else return "";
+
+    mQuery.exec(statement);
+    if (!mQuery.isActive()){
+        SqlExecFailedLOG<<lastError();
+        return "";
+    }
+
+    mQuery.first();
+    if (!mQuery.isValid())
+        return "";
+
+    if (mType == SQLType::Mysql)
+        return mQuery.value(0).toString();
+    else return mQuery.value(2).toString();
+
 }
 
 int SqlReadWrite::tableRows(QCString table)
@@ -242,8 +305,184 @@ QSqlRecord SqlReadWrite::lastRecord() const
     return mQuery.record();
 }
 
-bool SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCFieldsList values)
-{ // fieldList是所有字段的列表,要拆成逗号分隔的QString,即QString("channel,view,wellsize") 不需要单引号
-    // values是个列表,每个元素都是小括号包裹起来逗号分隔的字符串,需要单引号
-   // QFieldsList vals = {"('phase','2','96')", "('red','4','24')", "('green','8','384')"};
+bool SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCValuesList values)
+{/*
+    * values是个列表,每个元素都是小括号包裹起来逗号分隔的字符串,需要单引号
+    * fieldList是所有字段的列表,要拆成逗号分隔的,不需要单引号
+    * QFieldsList fields = {"ana_spec1","ana_spec2","exper_name"};
+    * QFieldsList values = {"('0.5','0.6','chenbei')","('0.86','0.34','chbi')","('0.98','0.16','cb')"};
+    * instance->addRecord(ExperGeneralConfigTableName,fields,values);
+    * 本函数可以插入多组值，字段数量和值的元素包含的值个数要一致
+*/
+    QString field;
+    foreach(auto f,fieldList){
+        field.append(f);
+        field.append(',');
+    }
+    field.chop(1);
+
+    QString value;
+    foreach(auto v,values) {
+        value.append(v);
+        value.append(',');
+    }
+    value.chop(1);
+
+    auto statement = QString(InsertRecord).arg(table).arg(field).arg(value);
+    mQuery.exec(statement);
+    if (mQuery.isActive()) {
+        LOG<<statement<<" successful!";
+        return true;
+    } else {
+        SqlExecFailedLOG<<lastError();
+    }
+    LOG<<statement<<" failed!";
+    return false;
 }
+
+QBoollist SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCValuemap map)
+{
+    auto count = map.count();
+    QBoollist list(count);
+    for(int i = 0 ; i < count;++i) {
+        auto vals = map.at(i);
+        if (vals.count() != fieldList.count()){
+            list[i] = false; // 键值对个数必须匹配
+            continue;
+        }
+        else {
+            addRecord(table,fieldList,vals);
+            list[i] = true;
+        }
+    }
+    LOG<<"the addRecord's ret is "<<list;
+    return list;
+}
+
+bool SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCString value)
+{ // 本函数只插入一组值
+    QCValuesList values = {value};
+    return addRecord(table,fieldList,values);
+}
+
+bool SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCValuelist values)
+{ // 本函数只插入一组值,但不是字符串包含单引号的形式,就是和fueldList对应的值
+    if (fieldList.count() != values.count())
+        return false;
+
+    QString value = "("; // 要自己加括号
+    foreach(auto v,values) {
+        value.append("\'"); // 自己加单引号
+        value.append(v);
+        value.append("\'");
+        value.append(',');
+    }
+    value.chop(1);
+    value.append(")");
+
+    return addRecord(table,fieldList,value);
+}
+
+bool SqlReadWrite::haveRecord(QCString table,QCString condition)
+{
+    auto statement = QString(SelectXFromTableWhere).arg(table).arg(condition);
+    mQuery.exec(statement);
+    if (!mQuery.isActive()) {
+        SqlExecFailedLOG<<lastError();
+    } else {
+        mQuery.first();
+        if (mQuery.isValid() && lastRecord().count()>=1) {
+            LOG<<"have record where "<<condition;
+            return true;
+        }
+    }
+    LOG<<"don't have record where "<<condition;
+    return false;
+}
+
+bool SqlReadWrite::haveRecord(QCString table,int row)
+{// 一个快捷方法检查是否存在指定行记录
+       auto condition = QString("id = %1").arg(row);
+       return haveRecord(table,condition);
+}
+
+bool SqlReadWrite::removeRecord(QCString table, QCString condition)
+{ // condition 如果有特殊字符例如逗号可能需要加引号
+    if (!haveRecord(table,condition)) return true;
+
+    auto statement = QString(RemoveRecord).arg(table).arg(condition);
+    mQuery.exec(statement);
+    if (!mQuery.isActive()) {
+        SqlExecFailedLOG<<lastError();
+        return false;
+    }
+    LOG<<statement<<" successful!";
+    return true;
+}
+
+bool SqlReadWrite::removeRecord(QCString table, int row)
+{ // 一个快捷方法删除指定行的
+    auto condition = QString("id = %1").arg(row);
+    return removeRecord(table,condition);
+}
+
+bool SqlReadWrite::updateRecord(QCString table,QCString dict, QCString condition)
+{/*
+    dict = "ana_spec1 = '0.55', ana_spec2 = '0.01', exper_name = 'hbnfjhsdbf' "
+    condition = "id = 3" 像这样使用, 更新多对值
+*/
+    auto statement = QString(UpdateRecord).arg(table).arg(dict).arg(condition);
+    mQuery.exec(statement);
+    if (!mQuery.isActive()) {
+        SqlExecFailedLOG<<lastError();
+        return false;
+    }
+     LOG<<statement<<" successful!";
+    return true;
+}
+
+bool SqlReadWrite::updateRecord(QCString table,QCString dict, int row)
+{// 一个快捷方法更新指定行的记录
+       if (!haveRecord(table,row)) return false;
+       auto condition = QString("id = %1").arg(row);
+       return updateRecord(table,dict,condition);
+}
+
+bool SqlReadWrite::updateRecord(QCString table,QCString key, QCString value,QCString condition)
+{ // instance->updateRecord(ExperGeneralConfigTableName,"ana_spec1","100",5); 这样用
+    auto dict = QString("%1 = '%2' ").arg(key).arg(value);
+    return updateRecord(table,dict,condition);
+}
+
+bool SqlReadWrite::updateRecord(QCString table,QCString key, QCString value,int row)
+{// 一个快捷方法更新指定行的记录
+       if (!haveRecord(table,row)) return false;
+       auto condition = QString("id = %1").arg(row);
+       return updateRecord(table,key,value,condition);
+}
+
+bool SqlReadWrite::updateRecord(QCString table,QFieldsList keys, QValuesList values,QCString condition)
+{//  QFieldsList fields = {"channel","view","wellsize"}; QValuesList vals = {"channel","view","wellsize"};
+    if (keys.count() != values.count()) return false;
+    QString dict;
+    auto count = keys.count();
+    for(int i = 0; i < count; ++i) {
+        auto key = keys.at(i);
+        auto val = values.at(i);
+        dict += key + " = " + "\'" +val + "\'"+','; // A='1',B='1',...
+    }
+    dict.chop(1);//去掉逗号
+    return updateRecord(table,dict,condition);
+}
+
+bool SqlReadWrite::updateRecord(QCString table,QFieldsList keys, QValuesList values,int row)
+{
+    if (!haveRecord(table,row)) return false;
+    auto condition = QString("id = %1").arg(row);
+    return updateRecord(table,keys,values,condition);
+}
+
+
+
+
+
