@@ -9,6 +9,9 @@ void test3();
 void test4();
 void test5();
 void test6();
+bool test7();
+static SqlReadWrite* currentSqlReadWritePointer();
+QValuelist fakevalues();
 
 int main(int argc, char *argv[])
 {
@@ -18,8 +21,42 @@ int main(int argc, char *argv[])
    // test3(); // （3）测试插入和更新值
     //test4();
     //test5();
-    test6();
+    //test6();
+   test7();
+    QFileInfo info("C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Data\\eosi");
+    qDebug()<<info.lastRead();
     return a.exec();
+}
+
+bool test7()
+{
+    auto sql = MysqlReadWritePointer;
+    sql->open("eosi","root","199791","127.0.0.1",3306);
+//    auto sql = SqliteReadWritePointer;
+//    sql->open("eosi.db3");
+    auto values = fakevalues(); // QVector<QString>,把要插入的值按照顺序返回一个列表
+    auto fields = ExperGeneralConfigFields;
+    fields.pop_front(); // 添加新纪录时id不需要指定
+    auto rows = sql->tableRows(ExperGeneralConfigTableName);
+
+    if (!sql->haveTable(ExperGeneralConfigTableName)) {// 不存在就创建表
+        if (sql->type() == SQLType::Mysql)
+            sql->createTable(ExperGeneralConfigTableName,CreateExperGeneralConfigTableMysql,CreateExperGeneralConfigTableInit);
+        else sql->createTable(ExperGeneralConfigTableName,CreateExperGeneralConfigTableSqlite,CreateExperGeneralConfigTableInit);
+    } else {// 存在表
+        if (!sql->fieldsRight(ExperGeneralConfigTableName,ExperGeneralConfigFields)) {// 不正确，删除重新创建
+            sql->dropTable(ExperGeneralConfigTableName); // 删除并重新创建
+            if (sql->type() == SQLType::Mysql)
+                sql->createTable(ExperGeneralConfigTableName,CreateExperGeneralConfigTableMysql,CreateExperGeneralConfigTableInit);
+            else sql->createTable(ExperGeneralConfigTableName,CreateExperGeneralConfigTableSqlite,CreateExperGeneralConfigTableInit);
+        }
+    }
+     sql->addRecord(ExperGeneralConfigTableName,fields,values); // 添加新的记录
+     sql->query(QString(PrimaryKeyReorderMysql).arg(ExperGeneralConfigTableName));
+    if (sql->tableRows(ExperGeneralConfigTableName) == rows+1) // 确实新增1条记录
+        return true;
+
+     return true;
 }
 
 void test6()
@@ -239,4 +276,52 @@ void test1()
     instance->open("test","root","199791","127.0.0.1",3306);
    // instance->dropDataSource("test"); // 删除自身测试
     qDebug()<<"database ? "<<instance->database(); // 从结果来看可以删除自身
+}
+
+QValuelist fakevalues()
+{ //  ExperGeneralConfigFields规定的顺序,注意id是自动增长无需规定
+    QValuelist list;
+    list << QDateTime::currentDateTime().toString("yyyy/MM/hh hh:mm:ss");
+    list << "分析定义";
+    list << "是大家看法和会计师大后方会计师大后方看收到客户的数据库"
+            "上的飞机和速度加快粉红色的尽快发货及时将货款收到回复即可收到回复即可收到"
+            "胜多负少。，麦克拉卢卡库链接打开垃圾深刻理解的撒范德萨卡夫卡的数据库数据的v看速度加快速度"
+            "的身份绝对是覅空手道解放开绿灯司法鉴定司搭街坊昆仑山地方艰苦拉萨的封建士大夫撒旦解放昆仑山搭街坊可是到了";
+    list << QString::number(0.58);
+    list << QString::number(0.69);
+    list << "phase";
+    list << "大肠杆菌";
+    list << "experiment_description";
+    list << "experiment_name";
+    list << "experiment_person";
+    list << "experiment_type";
+    list << "objective";
+    list << "scan_type";
+    if (true) {
+        list << QString::number(2);
+        list << QString::number(1800);
+        list << QDateTime(QDate(2023,8,23),QTime(10,30)).toString("yyyy/MM/dd hh:mm");
+        list << "true";
+        list << QDateTime(QDate(2023,8,23),QTime(9,30)).toString("yyyy/MM/dd hh:mm");
+        list << QString::number(3600);
+    } else {
+        list << QString::number(8);
+        list << QString::number(1800);
+        list << "";
+        list << "false";
+        list << "";
+        list << QString::number(1800*8);
+    }
+    list << QString::number(4);
+    list << QString::number(384);
+
+    return list;
+}
+static SqlReadWrite* currentSqlReadWritePointer()
+{
+    static SqlReadWrite * w = nullptr;
+    if (CurrentSqliteType)
+        w = SqliteReadWritePointer;
+    else w = MysqlReadWritePointer;
+    return w;
 }

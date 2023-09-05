@@ -20,7 +20,7 @@ MySqlReadWrite& MySqlReadWrite::instance()
 }
 
 MySqlLoginError MySqlReadWrite::open(QCString db, QCString user, QCString pwd,QCString ip, int port)
-{
+{ // open就完成了检查数据源的功能,如果是DataSourceUnFinded
     if (isValid() && isOpen()) {
         LOG<<"mysql is valid and open!";
         return MySqlLoginError::NoError;
@@ -44,6 +44,23 @@ MySqlLoginError MySqlReadWrite::open(QCString db, QCString user, QCString pwd,QC
     }
     LOG<<"mysql is init and open!";
     return MySqlLoginError::NoError;
+}
+
+bool MySqlReadWrite::haveRecordCaseSensitive(QCString table,QCString condition)
+{ // 大小写敏感
+    auto statement = QString(SelectXFromTableWhereBinary).arg(table).arg(condition);
+    mQuery.exec(statement);
+    if (!mQuery.isActive()) {
+        SqlExecFailedLOG<<lastError();
+    } else {
+        mQuery.first();
+        if (mQuery.isValid()) { // 记录有效就说明找到了
+            LOG<<"have record where "<<condition;
+            return true;
+        }
+    }
+    LOG<<"don't have record where "<<condition;
+    return false;
 }
 
 bool MySqlReadWrite::haveDataSource(QCString source)
@@ -70,7 +87,7 @@ bool MySqlReadWrite::haveDataSource(QCString source)
 }
 
 bool MySqlReadWrite::createDataSource(QCString source)
-{
+{ // 必须连接上mysql才能使用本函数
     if (haveDataSource(source)) return true;
     auto statements = QString(CreateDataSource).arg(source);
     mQuery.exec(statements);

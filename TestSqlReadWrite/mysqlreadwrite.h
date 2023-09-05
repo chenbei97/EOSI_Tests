@@ -23,6 +23,7 @@ public:
     static MySqlReadWrite& instance();
     MySqlLoginError open(QCString db, QCString user, QCString pwd,QCString ip, int port);
 
+    bool haveRecordCaseSensitive(QCString table,QCString condition);
     bool haveDataSource(QCString source);
     bool createDataSource(QCString source);
     bool dropDataSource(QCString source);
@@ -33,6 +34,6 @@ private:
     ~MySqlReadWrite();
 };
 
-#define MysqlReadWritePointer (&MySqlReadWrite::instance())
+
 
 #endif // MYSQLREADWRITE_H

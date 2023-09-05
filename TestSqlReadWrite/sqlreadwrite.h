@@ -44,8 +44,10 @@ public:
     QString fieldValue(QCString table,int row, const QString&field);
 
     bool query(QCString q);
+    QString dbError() const;
     QString lastError() const;
     QSqlRecord lastRecord() const;
+    QSqlQuery lastQuery() const;
 
     bool addRecord(QCString table,QCFieldsList fieldList, QCValuesList values); // 多值
     QBoollist addRecord(QCString table,QCFieldsList fieldList, QCValuemap map); // 多值
@@ -53,6 +55,7 @@ public:
     bool addRecord(QCString table,QCFieldsList fieldList, QCValuelist values); // 单组值
 
     bool haveRecord(QCString table,QCString condition);
+    bool haveRecord(QCString table,QCString field,QCString condition);
     bool haveRecord(QCString table,int row);
 
     bool removeRecord(QCString table, QCString condition);

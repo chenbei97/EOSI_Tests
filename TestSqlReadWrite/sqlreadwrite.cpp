@@ -1,5 +1,7 @@
 ﻿#include "sqlreadwrite.h"
 
+extern  SQLType CurrentSqlType = SQLType::Sqlite;
+
 SqlReadWrite::SqlReadWrite(QObject *parent) : QObject(parent)
 {
 }
@@ -63,7 +65,7 @@ bool SqlReadWrite::haveTable(QCString table)
         if (mQuery.isValid() && rec.count() == 1) { // 查询有效时只会有1条记录
             auto t = rec.value(0).toString(); // 会返回这个表名称
             if (t == table) {
-                LOG<<"table"<<t<<" is exist!";
+                LOG<<"table"<<t<<" is already exist!";
                 return true;
             }
         }
@@ -295,6 +297,11 @@ bool SqlReadWrite::query(QCString q)
     return r;
 }
 
+QString SqlReadWrite::dbError() const
+{
+    return mDB.lastError().text();
+}
+
 QString SqlReadWrite::lastError() const
 {
     return  mQuery.lastError().text();
@@ -303,6 +310,11 @@ QString SqlReadWrite::lastError() const
 QSqlRecord SqlReadWrite::lastRecord() const
 {
     return mQuery.record();
+}
+
+QSqlQuery SqlReadWrite::lastQuery() const
+{
+    return mQuery;
 }
 
 bool SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCValuesList values)
@@ -332,6 +344,7 @@ bool SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCValuesList
     mQuery.exec(statement);
     if (mQuery.isActive()) {
         LOG<<statement<<" successful!";
+         // 把所有记录按照时间顺序重更新id值
         return true;
     } else {
         SqlExecFailedLOG<<lastError();
@@ -341,7 +354,7 @@ bool SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCValuesList
 }
 
 QBoollist SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCValuemap map)
-{
+{ // 也是添加多组值,二维列表，每行是一组值
     auto count = map.count();
     QBoollist list(count);
     for(int i = 0 ; i < count;++i) {
@@ -360,13 +373,14 @@ QBoollist SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCValue
 }
 
 bool SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCString value)
-{ // 本函数只插入一组值
+{ // 本函数只插入一组值，是字符串包含单引号的形式，要求输入是"('0.5','0.6','chenbei')"的形式
     QCValuesList values = {value};
     return addRecord(table,fieldList,values);
 }
 
 bool SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCValuelist values)
 { // 本函数只插入一组值,但不是字符串包含单引号的形式,就是和fueldList对应的值
+    //注意是QCValuelist ,不是QCValuesList
     if (fieldList.count() != values.count())
         return false;
 
@@ -379,7 +393,7 @@ bool SqlReadWrite::addRecord(QCString table,QCFieldsList fieldList, QCValuelist 
     }
     value.chop(1);
     value.append(")");
-
+    LOG<<"values = "<<value;
     return addRecord(table,fieldList,value);
 }
 
@@ -391,12 +405,27 @@ bool SqlReadWrite::haveRecord(QCString table,QCString condition)
         SqlExecFailedLOG<<lastError();
     } else {
         mQuery.first();
-        if (mQuery.isValid() && lastRecord().count()>=1) {
+        if (mQuery.isValid()) { // 记录有效就说明找到了
             LOG<<"have record where "<<condition;
             return true;
         }
     }
     LOG<<"don't have record where "<<condition;
+    return false;
+}
+
+bool SqlReadWrite::haveRecord(QCString table,QCString field,QCString condition)
+{
+    auto statement = QString(SelectFieldFromTableWhere).arg(field).arg(table).arg(condition);
+    mQuery.exec(statement);
+    if (!mQuery.isActive()) {
+        SqlExecFailedLOG<<lastError();
+    } else {
+        mQuery.first();
+        if (mQuery.isValid()) {
+            return true;
+        }
+    }
     return false;
 }
 
@@ -449,7 +478,8 @@ bool SqlReadWrite::updateRecord(QCString table,QCString dict, int row)
 }
 
 bool SqlReadWrite::updateRecord(QCString table,QCString key, QCString value,QCString condition)
-{ // instance->updateRecord(ExperGeneralConfigTableName,"ana_spec1","100",5); 这样用
+{ // instance->updateRecord(ExperGeneralConfigTableName,"ana_spec1","100","id = 5"); 这样用
+    // 只更新一对值 update logininfo set key = 'value' where ..
     auto dict = QString("%1 = '%2' ").arg(key).arg(value);
     return updateRecord(table,dict,condition);
 }
@@ -476,7 +506,7 @@ bool SqlReadWrite::updateRecord(QCString table,QFieldsList keys, QValuesList val
 }
 
 bool SqlReadWrite::updateRecord(QCString table,QFieldsList keys, QValuesList values,int row)
-{
+{ // 更新指定行的字段值
     if (!haveRecord(table,row)) return false;
     auto condition = QString("id = %1").arg(row);
     return updateRecord(table,keys,values,condition);

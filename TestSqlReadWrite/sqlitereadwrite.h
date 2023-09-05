@@ -20,5 +20,5 @@ private:
     QString mStandardPath;
 };
 
-#define SqliteReadWritePointer (&SqliteReadWrite::instance())
+
 #endif // SQLITEREADWRITE_H

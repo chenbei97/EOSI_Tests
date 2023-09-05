@@ -27,20 +27,16 @@ bool SqliteReadWrite::open(QCString db,QCString path)
     auto dir = QDir();
     QString fullPath;
 
-    auto dbname = db;
-    if (!dbname.endsWith(".db3"))
-        dbname.append(".db3");
-
     if (!path.isEmpty()) { // 传递了指定路径
         if (!dir.exists(path)) { // 传递的路径不存在
             LOG<<path<<" is not exists!";
             return false;
         }
         fullPath = path;
-        fullPath += "/"+dbname;
+        fullPath += "/"+db;
         LOG<<path<<" is exists!";
     } else { // 使用标准路径
-        fullPath = mStandardPath+"/"+dbname;
+        fullPath = mStandardPath+"/"+db;
     }
 
     mDB.setDatabaseName(fullPath);
@@ -66,10 +62,10 @@ bool SqliteReadWrite::haveDataSource(QCString source,QCString path)
         fullpath = mStandardPath+"/"+source;
 
     if (!dir.exists(fullpath)) { // 完整路径不存在
-        //LOG<<fullpath<<" is not exists!";
+        LOG<<fullpath<<" data source is not exists!";
         return false;
     }
-    //LOG<<fullpath<<" is exists!";
+    LOG<<fullpath<<" data source is exists!";
     return true;
 }
 
