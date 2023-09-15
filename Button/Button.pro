@@ -20,7 +20,6 @@ SOURCES += \
     button.cpp
 
 HEADERS += \
-    Button_global.h \
     button.h
 
 # Default rules for deployment.

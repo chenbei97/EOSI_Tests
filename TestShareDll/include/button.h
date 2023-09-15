@@ -12,7 +12,7 @@
 //#  define BUTTON_EXPORT Q_DECL_IMPORT
 //#endif
 
-class Q_DECL_EXPORT Button :public QPushButton
+class Q_DECL_IMPORT Button :public QPushButton
 {
     Q_OBJECT
 private:
