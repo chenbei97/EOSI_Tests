@@ -9,7 +9,7 @@ MainWidget::MainWidget(QWidget* parent)
     , imgwidth(0), imgheight(0), imgdata(nullptr)
     , resolutionIndex(0), m_temp(TOUPCAM_TEMP_DEF), m_tint(TOUPCAM_TINT_DEF), m_count(0)
 {
-    setMinimumSize(2000, 1200);
+    setMinimumSize(1000, 800);
 
     QGridLayout* gmain = new QGridLayout();
 
