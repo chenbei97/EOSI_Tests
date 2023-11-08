@@ -77,6 +77,11 @@ MainWidget::MainWidget(QWidget* parent)
         if (toupcam && SUCCEEDED(Toupcam_get_FrameRate(toupcam, &nFrame, &nTime, &nTotalFrame)) && (nTime > 0))
             frameRateLabel->setText(QString::asprintf("%u, fps = %.1f", nTotalFrame, nFrame * 1000.0 / nTime));
     });
+
+    connect(this,&MainWidget::imageCaptured,[this](auto image) {
+        QImage newimage = image.scaled(canvas->width(), canvas->height(), Qt::KeepAspectRatio, Qt::FastTransformation);
+        canvas->setPixmap(QPixmap::fromImage(image));
+    });
 }
 
 void MainWidget::closeCamera()
@@ -275,9 +280,10 @@ void MainWidget::handleImageEvent()
         // imgdata分配了多大内存读取就使用多大内存,_msize可以计算分配的内存
         //auto image = QImage::fromData(imgdata.get(), _msize(imgdata.get()),"jpg");
        auto image = QImage(imgdata.get(), info.width, info.height, QImage::Format_RGB888);
-        QImage newimage = image.scaled(canvas->width(), canvas->height(), Qt::KeepAspectRatio, Qt::FastTransformation);
-        canvas->setPixmap(QPixmap::fromImage(newimage));
-        //emit imageCaptured(newimage);
+       // 不要在回调函数内作图像scaled和setPixmap
+        //QImage newimage = image.scaled(canvas->width(), canvas->height(), Qt::KeepAspectRatio, Qt::FastTransformation);
+       // canvas->setPixmap(QPixmap::fromImage(image));
+        emit imageCaptured(image); // 在槽函数内去scaled不会卡
     } else {
          qDebug()<<"pull image failed";
     }
