@@ -24,6 +24,7 @@ class MainWidget : public QWidget
     QCheckBox*      autoexposure;
     QSlider*        exposureTimeSlider;
     QSlider*        exposureGainSlider;
+    QSlider *  adjustExposure;
     QSlider*        tempslider;
     QSlider*        tintslider;
     QLabel*         exposureTimeLabel;

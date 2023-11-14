@@ -16,6 +16,14 @@ MainWidget::MainWidget(QWidget* parent)
     auto resolutionBox = initResolutionBox();
     auto exposureBox = initExposureBox();
     auto whiteBox = initTempBox();
+    adjustExposure = new QSlider(Qt::Horizontal);
+    adjustExposure->setRange(100,50000);
+
+    connect(adjustExposure,&QSlider::valueChanged,[this](auto time){
+        qDebug()<<"time = "<<time;
+        Toupcam_put_AutoExpoEnable(toupcam, false);
+        Toupcam_put_ExpoTime(toupcam, (unsigned)time);
+    });
 
     openBtn = new QPushButton("打开相机");
     connect(openBtn, &QPushButton::clicked, this, &MainWidget::onBtnOpen);
@@ -29,6 +37,7 @@ MainWidget::MainWidget(QWidget* parent)
     v1->addWidget(whiteBox);
     v1->addWidget(openBtn);
     v1->addWidget(captureBtn);
+    v1->addWidget(adjustExposure);
     v1->addStretch();
     gmain->addLayout(v1, 0, 0);
 
@@ -275,14 +284,17 @@ void MainWidget::handleImageEvent()
     ToupcamFrameInfoV3 info;
     if (SUCCEEDED(Toupcam_PullImageV3(toupcam, imgdata.get(),
                                       bStill, bits, rowPitch, &info))){
-        //print_imageInfo(&info);
+        print_imageInfo(&info);
 
         // imgdata分配了多大内存读取就使用多大内存,_msize可以计算分配的内存
         //auto image = QImage::fromData(imgdata.get(), _msize(imgdata.get()),"jpg");
+       //auto image = QImage(imgdata.get(), info.width, info.height, QImage::Format_BGR888);
        auto image = QImage(imgdata.get(), info.width, info.height, QImage::Format_RGB888);
+        //auto image = QImage(imgdata.get(), info.width, info.height, QImage::Format_RGBX8888);
+       //auto img = image.convertToFormat(QImage::Format_RGB32);
        // 不要在回调函数内作图像scaled和setPixmap
         //QImage newimage = image.scaled(canvas->width(), canvas->height(), Qt::KeepAspectRatio, Qt::FastTransformation);
-       // canvas->setPixmap(QPixmap::fromImage(image));
+       //canvas->setPixmap(QPixmap::fromImage(image));
         emit imageCaptured(image); // 在槽函数内去scaled不会卡
     } else {
          qDebug()<<"pull image failed";
@@ -416,6 +428,9 @@ QGroupBox* MainWidget::initExposureBox()
             if (toupcam)
             { // 显示曝光的值
                 exposureTimeLabel->setText(QString::number(value));
+                int enable = 0;
+                Toupcam_get_AutoExpoEnable(toupcam,&enable);
+                qDebug()<<"autoenable? "<<enable;
                 if (!autoexposure->isChecked())
                    Toupcam_put_ExpoTime(toupcam, value);
             }
