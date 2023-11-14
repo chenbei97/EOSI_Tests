@@ -183,7 +183,7 @@ void MainWidget::openCamera()
         }
 
         Toupcam_put_Option(toupcam, TOUPCAM_OPTION_BYTEORDER, 0); //Qimage use RGB byte order
-        Toupcam_put_AutoExpoEnable(toupcam, 1);
+        Toupcam_put_AutoExpoEnable(toupcam, 1); // 初始设置是自动曝光
         startCamera();
     }
 }
@@ -418,7 +418,7 @@ QGroupBox* MainWidget::initExposureBox()
         { // 勾选自动曝光就不能手动设置曝光时间和增益
             if (toupcam)
             {
-                Toupcam_put_AutoExpoEnable(toupcam, state ? 1 : 0);
+                Toupcam_put_AutoExpoEnable(toupcam, state ? 1 : 0); // 自动曝光勾选设置1
                 exposureTimeSlider->setEnabled(!state);
                 exposureGainSlider->setEnabled(!state);
             }
@@ -428,6 +428,7 @@ QGroupBox* MainWidget::initExposureBox()
             if (toupcam)
             { // 显示曝光的值
                 exposureTimeLabel->setText(QString::number(value));
+                if (!autoexposure->isChecked()) // 不是自动曝光时才能调
                 int enable = 0;
                 Toupcam_get_AutoExpoEnable(toupcam,&enable);
                 qDebug()<<"autoenable? "<<enable;
