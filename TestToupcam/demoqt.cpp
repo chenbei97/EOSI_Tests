@@ -428,14 +428,15 @@ QGroupBox* MainWidget::initExposureBox()
             if (toupcam)
             { // 显示曝光的值
                 exposureTimeLabel->setText(QString::number(value));
-                if (!autoexposure->isChecked()) // 不是自动曝光时才能调
-                int enable = 0;
-                Toupcam_get_AutoExpoEnable(toupcam,&enable);
-                qDebug()<<"autoenable? "<<enable;
-                if (!autoexposure->isChecked())
-                   Toupcam_put_ExpoTime(toupcam, value);
+                if (!autoexposure->isChecked()) {// 不是自动曝光时才能调
+                    int enable = 0;
+                    Toupcam_get_AutoExpoEnable(toupcam,&enable);
+                    qDebug()<<"autoenable? "<<enable;
+                    if (!autoexposure->isChecked())
+                       Toupcam_put_ExpoTime(toupcam, value);
             }
-        });
+        }});
+
         connect(exposureGainSlider, &QSlider::valueChanged, this, [this](int value)
         {
             if (toupcam)
@@ -448,7 +449,8 @@ QGroupBox* MainWidget::initExposureBox()
 
         QVBoxLayout* v = new QVBoxLayout();
         v->addWidget(autoexposure);
-        v->addLayout(makeLayout(new QLabel("Time(us):"), exposureTimeSlider, exposureTimeLabel, new QLabel("Gain(%):"), exposureGainSlider, exposureGainLabel));
+        v->addLayout(makeLayout(new QLabel("Time(us):"), exposureTimeSlider, exposureTimeLabel, new QLabel("Gain(%):"),
+                                exposureGainSlider, exposureGainLabel));
         box->setLayout(v);
         return box;
 }
